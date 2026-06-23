@@ -25,6 +25,7 @@ python scripts/validate_repository.py
 
 `compile --target codex` writes local skills to `dist/codex/skills` by default. When compiling for a bound project with `--path`, Codex skills are written to that project's `.codex/skills` directory.
 Codex compilation only includes rules with `audience: codex-core` or `audience: codex-project`. Rules marked `archive` stay out of the generated Codex bundle.
+For documentation-oriented skills such as `doc-coauthoring`, add matching project tags like `docs` or `writing`; they are no longer globally injected by default.
 
 ## Safe Deployment
 

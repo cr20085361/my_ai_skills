@@ -311,5 +311,41 @@ class TestPGRMSSystem(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "internal-comms")))
 
 
+    def test_14_doc_coauthoring_not_injected_without_docs_tags(self):
+        """doc-coauthoring 不应再因 general 标签默认注入。"""
+        binding_info = {
+            "bound_at": "2026-05-20 13:00:00",
+            "project_path": self.temp_project_dir.replace("\\", "/"),
+            "tags": ["git", "python", "mcp", "release", "skill"],
+            "preferred_ide": "codex"
+        }
+        config_path = os.path.join(self.temp_project_dir, ".pgrms.json")
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(binding_info, f, indent=2)
+
+        run_compilation(target="codex", project_path=self.temp_project_dir)
+
+        codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
+        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "doc-coauthoring")))
+        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "mcp-builder", "SKILL.md")))
+
+    def test_15_doc_coauthoring_injected_with_docs_tag(self):
+        """doc-coauthoring 只在 docs/writing 项目中注入。"""
+        binding_info = {
+            "bound_at": "2026-05-20 13:00:00",
+            "project_path": self.temp_project_dir.replace("\\", "/"),
+            "tags": ["docs", "writing"],
+            "preferred_ide": "codex"
+        }
+        config_path = os.path.join(self.temp_project_dir, ".pgrms.json")
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(binding_info, f, indent=2)
+
+        run_compilation(target="codex", project_path=self.temp_project_dir)
+
+        codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
+        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "doc-coauthoring", "SKILL.md")))
+
+
 if __name__ == "__main__":
     unittest.main()
