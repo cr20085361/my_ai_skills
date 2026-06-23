@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 PGRMS (个人全局规则管理系统) - 主控制命令行程序
@@ -11,6 +11,8 @@ import json
 import datetime
 import time
 import shutil
+import re
+import subprocess
 
 # 将脚本所在目录加入系统路径以方便导入其他模块
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -21,6 +23,17 @@ from utils import (
     read_file_safely, safe_write_json, ensure_utf8_console,
     cli_success, cli_warning, cli_error, cli_info, cli_summary
 )
+
+GLOBAL_DEPLOY_LOG_DIRNAME = ".pgrms-deploy-logs"
+
+
+def normalize_rule_name(name):
+    """
+    Normalize rule identifiers for stable directory names and CLI usage.
+    """
+    normalized = re.sub(r"[^a-z0-9-]+", "-", (name or "").strip().lower())
+    normalized = re.sub(r"-+", "-", normalized).strip("-")
+    return normalized
 
 
 def scan_repository():
@@ -116,6 +129,7 @@ def parse_rule_metadata(rule_file_path, source_type, category, relative_path):
     """
     try:
         content, used_enc = read_file_safely(rule_file_path)
+        content = content.lstrip("\ufeff")
 
         if not content.strip().startswith("---"):
             return None
@@ -130,6 +144,7 @@ def parse_rule_metadata(rule_file_path, source_type, category, relative_path):
             "title": "",
             "description": "",
             "category": category,
+            "audience": "archive",
             "tags": [],
             "status": "active",
             "score": 10.0,
@@ -159,6 +174,8 @@ def parse_rule_metadata(rule_file_path, source_type, category, relative_path):
                 metadata["description"] = val
             elif key == "category":
                 metadata["category"] = val
+            elif key == "audience":
+                metadata["audience"] = val.lower()
             elif key == "status":
                 metadata["status"] = val
             elif key == "score":
@@ -172,6 +189,9 @@ def parse_rule_metadata(rule_file_path, source_type, category, relative_path):
 
         if not metadata["name"]:
             metadata["name"] = os.path.basename(os.path.dirname(rule_file_path))
+        normalized_name = normalize_rule_name(metadata["name"])
+        if normalized_name:
+            metadata["name"] = normalized_name
         if not metadata["title"]:
             metadata["title"] = metadata["name"]
 
@@ -430,7 +450,28 @@ def get_global_skill_dirs(home_dir=None):
     ]
 
 
-def deploy_global_skill_packages(dist_skills, home_dir=None):
+def make_deploy_log_dir(home_dir=None):
+    base_home = home_dir or os.path.expanduser("~")
+    log_dir = os.path.join(base_home, GLOBAL_DEPLOY_LOG_DIRNAME)
+    os.makedirs(log_dir, exist_ok=True)
+    return log_dir
+
+
+def write_deploy_log(home_dir, lines):
+    log_dir = make_deploy_log_dir(home_dir)
+    stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    log_file = os.path.join(log_dir, f"deploy-{stamp}.log")
+    with open(log_file, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(lines) + "\n")
+    return log_file
+
+
+def backup_path_for(target_path, backup_root):
+    rel_name = os.path.normpath(target_path).replace(":", "").replace("\\", "_").replace("/", "_")
+    return os.path.join(backup_root, rel_name)
+
+
+def deploy_global_skill_packages(dist_skills, home_dir=None, backup=True):
     """
     将编译好的技能包同步到所有受支持的全局目录。
     返回成功写入的目录列表。
@@ -439,7 +480,12 @@ def deploy_global_skill_packages(dist_skills, home_dir=None):
         return []
 
     deployed_dirs = []
+    log_lines = [f"PGRMS skill deploy: {datetime.datetime.now().isoformat(timespec='seconds')}"]
     seen_dirs = set()
+    backup_root = None
+    if backup:
+        backup_root = os.path.join(make_deploy_log_dir(home_dir), "backups", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+        os.makedirs(backup_root, exist_ok=True)
 
     for target_dir in get_global_skill_dirs(home_dir):
         normalized_dir = os.path.normpath(target_dir)
@@ -453,12 +499,21 @@ def deploy_global_skill_packages(dist_skills, home_dir=None):
             dst = os.path.join(target_dir, item)
             if os.path.isdir(src):
                 if os.path.exists(dst):
+                    if backup_root:
+                        shutil.copytree(dst, backup_path_for(dst, backup_root), dirs_exist_ok=True)
                     shutil.rmtree(dst)
                 shutil.copytree(src, dst)
             else:
+                if os.path.exists(dst) and backup_root:
+                    os.makedirs(os.path.dirname(backup_path_for(dst, backup_root)), exist_ok=True)
+                    shutil.copy2(dst, backup_path_for(dst, backup_root))
                 shutil.copy2(src, dst)
+            log_lines.append(f"{src} -> {dst}")
         deployed_dirs.append(target_dir)
 
+    if deployed_dirs:
+        log_file = write_deploy_log(home_dir, log_lines)
+        cli_info(f"Deployment log: {log_file}")
     return deployed_dirs
 
 
@@ -473,6 +528,8 @@ def get_vscode_user_prompts_dir(home_dir=None):
 
     base_home = home_dir or os.path.expanduser("~")
     if sys.platform.startswith("win"):
+        if home_dir:
+            return os.path.join(base_home, "AppData", "Roaming", "Code", "User", "prompts")
         appdata_dir = os.environ.get("APPDATA")
         if appdata_dir:
             return os.path.join(appdata_dir, "Code", "User", "prompts")
@@ -510,7 +567,7 @@ def build_vscode_global_instruction_content(rule_file_path):
     )
 
 
-def deploy_vscode_global_instructions(prompts_dir=None, rule_file_path=None):
+def deploy_vscode_global_instructions(prompts_dir=None, rule_file_path=None, home_dir=None):
     """
     同步 VS Code Copilot 用户级全局 instructions。
     """
@@ -524,7 +581,7 @@ def deploy_vscode_global_instructions(prompts_dir=None, rule_file_path=None):
     if not instruction_content:
         return None
 
-    target_dir = prompts_dir or get_vscode_user_prompts_dir()
+    target_dir = prompts_dir or get_vscode_user_prompts_dir(home_dir)
     os.makedirs(target_dir, exist_ok=True)
 
     target_file = os.path.join(target_dir, "pgrms-global.instructions.md")
@@ -534,11 +591,11 @@ def deploy_vscode_global_instructions(prompts_dir=None, rule_file_path=None):
     return target_file
 
 
-def run_sync_vscode():
+def run_sync_vscode(home_dir=None):
     """
     将全局中文输出约束同步为 VS Code Copilot 用户级 instructions。
     """
-    target_file = deploy_vscode_global_instructions()
+    target_file = deploy_vscode_global_instructions(home_dir=home_dir)
     if target_file:
         cli_success(f"VS Code Copilot 全局指令已同步至: {target_file}")
     else:
@@ -546,7 +603,35 @@ def run_sync_vscode():
     return target_file
 
 
-def run_deploy(project_path=None, target="all"):
+def build_deploy_plan(home_dir=None):
+    home = home_dir or os.path.expanduser("~")
+    return [
+        ("skills", os.path.join(home, ".agent", "skills")),
+        ("skills", os.path.join(home, ".agents", "skills")),
+        ("gitignore", os.path.join(home, ".gitignore_global")),
+        ("gemini", os.path.join(home, ".gemini", "GEMINI.md")),
+        ("vscode", get_vscode_user_prompts_dir(home)),
+    ]
+
+
+def print_deploy_plan(home_dir=None):
+    cli_warning("Dry-run only. Add --apply to write user-global files.")
+    for label, path in build_deploy_plan(home_dir):
+        exists = "exists" if os.path.exists(path) else "missing"
+        print(f"  [{label}] {path} ({exists})")
+
+
+def configure_global_gitignore(gitignore_path):
+    subprocess.run(
+        ["git", "config", "--global", "core.excludesfile", gitignore_path],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+
+def run_deploy(project_path=None, target="all", apply=False, home_dir=None):
     """
     一键全自动部署：scan → compile → 文件部署。跨平台纯 Python 实现。
     """
@@ -568,32 +653,53 @@ def run_deploy(project_path=None, target="all"):
 
     # 步骤 3：全局配置文件部署（仅在不指定项目路径时执行）
     if not project_path:
-        print("\n\033[94m[步骤 3/3] 部署全局配置文件...\033[0m")
-        home_dir = os.path.expanduser("~")
+        print("\n\033[94m[步骤 3/3] 全局部署计划...\033[0m")
+        if not apply:
+            print_deploy_plan(home_dir)
+            elapsed = time.time() - t0
+            cli_summary(f"Dry-run complete | No user-global files changed | 耗时 {elapsed:.2f}s")
+            return
+
+        explicit_home = home_dir is not None
+        home_dir = home_dir or os.path.expanduser("~")
+        log_lines = [f"PGRMS global deploy: {datetime.datetime.now().isoformat(timespec='seconds')}"]
+        cli_warning(f"Applying global deployment under home: {home_dir}")
 
         # 部署 .gitignore_global
         gitignore_src = os.path.join(ROOT_DIR, ".gitignore_global")
         if os.path.exists(gitignore_src):
             gitignore_dst = os.path.join(home_dir, ".gitignore_global")
+            os.makedirs(os.path.dirname(gitignore_dst), exist_ok=True)
             shutil.copy2(gitignore_src, gitignore_dst)
-            os.system(f'git config --global core.excludesfile "{gitignore_dst}"')
-            cli_success("Git 全局忽略规则已激活。")
+            if explicit_home:
+                cli_warning("Skipping git config --global because --home was provided.")
+            else:
+                configure_global_gitignore(gitignore_dst)
+                cli_success("Git 全局忽略规则已激活。")
+            log_lines.append(f"{gitignore_src} -> {gitignore_dst}")
 
         # 部署 GEMINI.md
         gemini_src = os.path.join(ROOT_DIR, "GEMINI.md")
         if os.path.exists(gemini_src):
             gemini_dir = os.path.join(home_dir, ".gemini")
             os.makedirs(gemini_dir, exist_ok=True)
-            shutil.copy2(gemini_src, os.path.join(gemini_dir, "GEMINI.md"))
+            gemini_dst = os.path.join(gemini_dir, "GEMINI.md")
+            shutil.copy2(gemini_src, gemini_dst)
             cli_success("全局 AI 约束文件 (GEMINI.md) 已部署。")
+            log_lines.append(f"{gemini_src} -> {gemini_dst}")
 
-        run_sync_vscode()
+        vscode_file = run_sync_vscode(home_dir)
+        if vscode_file:
+            log_lines.append(f"VS Code instructions -> {vscode_file}")
 
         # 部署 Antigravity 全局技能包
         dist_skills = os.path.join(DIST_DIR, "antigravity", "skills")
         deployed_dirs = deploy_global_skill_packages(dist_skills, home_dir)
         if deployed_dirs:
             cli_success("全局技能包已同步至 ~/.agent/skills/ 与 ~/.agents/skills/ (VS Code Copilot)。")
+            log_lines.extend([f"skills -> {d}" for d in deployed_dirs])
+        log_file = write_deploy_log(home_dir, log_lines)
+        cli_info(f"Global deployment log: {log_file}")
     else:
         print("\n\033[94m[步骤 3/3] 跳过全局部署（已直推至项目目录）\033[0m")
 
@@ -620,7 +726,7 @@ def main():
     compile_parser = subparsers.add_parser("compile", help="编译通用规则至指定 IDE 格式分发")
     compile_parser.add_argument(
         "--target",
-        choices=["all", "cursor", "windsurf", "cline", "antigravity"],
+        choices=["all", "cursor", "windsurf", "cline", "antigravity", "codex"],
         default="all",
         help="目标 IDE 编译器类型 (默认: all)"
     )
@@ -649,7 +755,7 @@ def main():
     bind_parser.add_argument("--path", default=".", help="需要绑定的项目路径 (默认: 当前路径)")
     bind_parser.add_argument("--tags", help="手动强制指定的技术标签 (以逗号分隔，留空则启动自动探测)")
     bind_parser.add_argument("--force", action="store_true", help="强制重新绑定覆盖原有配置")
-    bind_parser.add_argument("--ide", choices=["cursor", "windsurf", "cline", "antigravity"], default="cursor",
+    bind_parser.add_argument("--ide", choices=["cursor", "windsurf", "cline", "antigravity", "codex"], default="cursor",
                              help="首选 IDE 类型，直推分发时仅输出该格式 (默认: cursor)")
 
     # 8. touch 命令
@@ -659,8 +765,10 @@ def main():
     # 9. deploy 命令 (一键全自动)
     deploy_parser = subparsers.add_parser("deploy", help="一键全自动: scan + compile + 部署全局配置（跨平台）")
     deploy_parser.add_argument("--path", help="指定项目路径，执行定向增量编译并直推分发")
-    deploy_parser.add_argument("--target", choices=["all", "cursor", "windsurf", "cline", "antigravity"],
+    deploy_parser.add_argument("--target", choices=["all", "cursor", "windsurf", "cline", "antigravity", "codex"],
                                default="all", help="目标 IDE (默认: all)")
+    deploy_parser.add_argument("--apply", action="store_true", help="执行真实全局写入；默认只做 dry-run")
+    deploy_parser.add_argument("--home", help="覆盖全局部署使用的 HOME 目录，主要用于测试")
 
     # 10. sync-vscode 命令
     subparsers.add_parser("sync-vscode", help="同步 VS Code Copilot 用户级全局 instructions")
@@ -704,7 +812,7 @@ def main():
     elif args.command == "touch":
         run_touching(args.rule)
     elif args.command == "deploy":
-        run_deploy(project_path=args.path, target=args.target)
+        run_deploy(project_path=args.path, target=args.target, apply=args.apply, home_dir=args.home)
     elif args.command == "sync-vscode":
         run_sync_vscode()
 

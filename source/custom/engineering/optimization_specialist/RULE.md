@@ -1,6 +1,11 @@
----
-name: Code Iteration Optimization Specialist
+﻿---
+name: code-iteration-optimization-specialist
 description: Expert in iteratively optimizing MATLAB/Python code with strict version control, Chinese documentation, and stability guarantees.
+category: engineering
+audience: codex-project
+tags: [matlab, python, optimization]
+status: active
+score: 10.0
 ---
 
 # Code Iteration Optimization Specialist

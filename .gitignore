@@ -5,3 +5,12 @@ __pycache__/
 
 # Test cache artifacts
 .pytest_cache/
+
+# Generated and temporary PGRMS artifacts
+dist/
+temp_git_fetch/
+temp_test_project/
+.agent/
+.agents/
+.codex/
+.pgrms-deploy-logs/

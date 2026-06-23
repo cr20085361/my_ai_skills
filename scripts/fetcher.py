@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 PGRMS (个人全局规则管理系统) - 第三方规则拉取与标准化引擎
@@ -48,6 +48,7 @@ def smart_extract_metadata(content, fallback_name):
         "name": fallback_name,
         "title": fallback_name,
         "description": "自动从第三方引入的规则配置。",
+        "audience": "archive",
         "tags": []
     }
     
@@ -68,6 +69,8 @@ def smart_extract_metadata(content, fallback_name):
                     metadata["title"] = v
                 elif k == "description":
                     metadata["description"] = v
+                elif k == "audience":
+                    metadata["audience"] = v
                 elif k == "tags":
                     v = v.replace("[", "").replace("]", "")
                     metadata["tags"] = [t.strip() for t in v.split(",") if t.strip()]
@@ -240,6 +243,7 @@ def run_fetching(url, category="engineering", explicit_name=None):
     rule_formatted_content.append(f"title: {metadata['title']}")
     rule_formatted_content.append(f"description: {metadata['description']}")
     rule_formatted_content.append(f"category: {metadata['category']}")
+    rule_formatted_content.append(f"audience: {metadata['audience']}")
     rule_formatted_content.append(f"tags: [{', '.join(metadata['tags'])}]")
     rule_formatted_content.append("status: active")
     rule_formatted_content.append("score: 10.0")
@@ -306,3 +310,5 @@ if __name__ == "__main__":
     url = sys.argv[1]
     cat = sys.argv[2] if len(sys.argv) > 2 else "engineering"
     run_fetching(url, cat)
+
+
