@@ -91,6 +91,67 @@
       "source_type": "custom",
       "path": "source/custom/design/ui-ux-pro-max"
     },
+    "cst-control-skill": {
+      "name": "cst-control-skill",
+      "title": "CST Studio Suite Python Control",
+      "description": "Use when an AI agent needs to connect to, open, create, save, or inspect CST Studio Suite 2026/SP2 projects through Python, including CST installation discovery, cst.interface/cst.results imports, script execution, and automation failure diagnosis.",
+      "category": "engineering",
+      "tags": [
+        "cst",
+        "python",
+        "electromagnetic",
+        "antenna",
+        "automation",
+        "parametric-modeling"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/cst-control-skill"
+    },
+    "cst-history-macro-skill": {
+      "name": "cst-history-macro-skill",
+      "title": "CST History List and VBA Modeling",
+      "description": "Use when an AI agent must create or modify CST Studio Suite 2026 geometry through History List/VBA snippets injected from Python, including CST parameters, materials, primitives, curves, lofts, boolean operations, transforms, imports, rebuilds, and History debugging.",
+      "category": "engineering",
+      "tags": [
+        "cst",
+        "history-list",
+        "vba",
+        "python",
+        "geometry",
+        "parametric-modeling"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/cst-history-macro-skill"
+    },
+    "cst-parametric-modeling": {
+      "name": "cst-parametric-modeling",
+      "title": "CST Parametric Modeling",
+      "description": "Use when building or iterating CST models that must retain internal parameter optimization, including CST Parameter List variables, derived parameters, rebuildable History VBA geometry, Parameter Sweep, Optimizer, and Tuning workflows.",
+      "category": "engineering",
+      "tags": [
+        "cst",
+        "parametric-modeling",
+        "parameter-sweep",
+        "optimizer",
+        "tuning",
+        "python",
+        "vba"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/cst-parametric-modeling"
+    },
     "matlab": {
       "name": "matlab",
       "title": "matlab",
