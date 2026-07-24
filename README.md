@@ -64,14 +64,15 @@ timeline
     2026-05-22 : v1.1.0 新增 VS Code Copilot 全局技能同步
     2026-05-22 : v1.1.1 清理 pyc 缓存并补齐仓库级忽略规则
     2026-06-11 : v1.1.2 增加仓库级 GitHub 归档指令文件
-    2026-07-24 : v1.2.0 新增三项 CST 工程技能并刷新元数据与看板
+    2026-06-23 : v1.2.0 升级为 Codex 友好的规则仓库并补齐本地安全部署
+    2026-07-24 : v1.3.0 新增三项 CST 工程技能并刷新元数据与看板
 ```
 
 ---
 
 ## 本次版本归档
 
-### v1.2.0（2026-07-24）
+### v1.3.0（2026-07-24）
 - **[NEW]** 新增 `cst-control-skill`，用于 CST Studio Suite 2026 SP2 的 Python 连接、工程打开/创建、History 注入与结果读取。
 - **[NEW]** 新增 `cst-history-macro-skill`，用于通过 History List 与 VBA 片段驱动可回放、可调试的 CST 建模流程。
 - **[NEW]** 新增 `cst-parametric-modeling`，用于保留 CST 内部参数、支持 `Parameter Sweep`、`Optimizer` 与 `Tuning` 的参数化建模。
@@ -103,11 +104,16 @@ powershell -ExecutionPolicy Bypass -File .\deploy.ps1
 - `cst-history-macro-skill`
 - `cst-parametric-modeling`
 
-以上三项技能从 `v1.2.0` 起纳入仓库的正式归档版本。
+以上三项技能从 `v1.3.0` 起纳入仓库的正式归档版本。
 
 ---
 
 ## 历史版本
+
+### v1.2.0（2026-06-23）
+- **[OPS]** 将 PGRMS 升级为更安全的 Codex 友好型规则仓库
+- **[NEW]** 增加默认 dry-run 部署、项目本地 Codex 编译输出与 `.codex/skills` 支持
+- **[REF]** 补齐仓库级校验、部署日志、规则受众治理与本地验证路径
 
 ### v1.1.2（2026-06-11）
 - **[DOC]** 新增仓库级 `.github/instructions/github-release-archiver.instructions.md`
