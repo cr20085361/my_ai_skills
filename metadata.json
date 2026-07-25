@@ -5,7 +5,13 @@
       "title": "algorithmic-art",
       "description": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations.",
       "category": "design",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "javascript",
+        "p5js",
+        "generative-art",
+        "design"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -18,7 +24,11 @@
       "title": "brand-guidelines",
       "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.",
       "category": "design",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "brand",
+        "design"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -31,7 +41,13 @@
       "title": "canvas-design",
       "description": "Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.",
       "category": "design",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "design",
+        "visual-art",
+        "png",
+        "pdf"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -44,7 +60,14 @@
       "title": "frontend-design",
       "description": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
       "category": "design",
-      "tags": [],
+      "audience": "codex-project",
+      "tags": [
+        "react",
+        "vue",
+        "css",
+        "javascript",
+        "tailwind"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -57,7 +80,12 @@
       "title": "slack-gif-creator",
       "description": "Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.\"",
       "category": "design",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "gif",
+        "slack",
+        "design"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -70,7 +98,13 @@
       "title": "theme-factory",
       "description": "Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.",
       "category": "design",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "theme",
+        "design",
+        "documents",
+        "presentations"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -83,7 +117,15 @@
       "title": "ui-ux-pro-max",
       "description": "UI/UX design intelligence. 50 styles, 21 palettes, 50 font pairings, 20 charts, 9 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, mobile app, .html, .tsx, .vue, .svelte. Elements: button, modal, navbar, sidebar, card, table, form, chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, flat design. Topics: color palette, accessibility, animation, layout, typography, font pairing, spacing, hover, shadow, gradient.",
       "category": "design",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "ui",
+        "ux",
+        "react",
+        "vue",
+        "tailwind",
+        "design"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -96,6 +138,7 @@
       "title": "CST Studio Suite Python Control",
       "description": "Use when an AI agent needs to connect to, open, create, save, or inspect CST Studio Suite 2026/SP2 projects through Python, including CST installation discovery, cst.interface/cst.results imports, script execution, and automation failure diagnosis.",
       "category": "engineering",
+      "audience": "codex-project",
       "tags": [
         "cst",
         "python",
@@ -116,6 +159,7 @@
       "title": "CST History List and VBA Modeling",
       "description": "Use when an AI agent must create or modify CST Studio Suite 2026 geometry through History List/VBA snippets injected from Python, including CST parameters, materials, primitives, curves, lofts, boolean operations, transforms, imports, rebuilds, and History debugging.",
       "category": "engineering",
+      "audience": "codex-project",
       "tags": [
         "cst",
         "history-list",
@@ -136,6 +180,7 @@
       "title": "CST Parametric Modeling",
       "description": "Use when building or iterating CST models that must retain internal parameter optimization, including CST Parameter List variables, derived parameters, rebuildable History VBA geometry, Parameter Sweep, Optimizer, and Tuning workflows.",
       "category": "engineering",
+      "audience": "codex-project",
       "tags": [
         "cst",
         "parametric-modeling",
@@ -157,7 +202,11 @@
       "title": "matlab",
       "description": "MATLAB and GNU Octave numerical computing for matrix operations, data analysis, visualization, and scientific computing. Use when writing MATLAB/Octave scripts for linear algebra, signal processing, image processing, differential equations, optimization, statistics, or creating scientific visualizations. Also use when the user needs help with MATLAB syntax, functions, or wants to convert between MATLAB and Python code. Scripts can be executed with MATLAB or the open-source GNU Octave interpreter.",
       "category": "engineering",
-      "tags": [],
+      "audience": "codex-project",
+      "tags": [
+        "matlab",
+        "octave"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -170,7 +219,13 @@
       "title": "mcp-builder",
       "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
       "category": "engineering",
-      "tags": [],
+      "audience": "codex-project",
+      "tags": [
+        "mcp",
+        "python",
+        "node",
+        "typescript"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -178,12 +233,17 @@
       "source_type": "custom",
       "path": "source/custom/engineering/mcp-builder"
     },
-    "Code Iteration Optimization Specialist": {
-      "name": "Code Iteration Optimization Specialist",
-      "title": "Code Iteration Optimization Specialist",
+    "code-iteration-optimization-specialist": {
+      "name": "code-iteration-optimization-specialist",
+      "title": "code-iteration-optimization-specialist",
       "description": "Expert in iteratively optimizing MATLAB/Python code with strict version control, Chinese documentation, and stability guarantees.",
       "category": "engineering",
-      "tags": [],
+      "audience": "codex-project",
+      "tags": [
+        "matlab",
+        "python",
+        "optimization"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -196,7 +256,11 @@
       "title": "skill-creator",
       "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
       "category": "engineering",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "skill",
+        "engineering"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -209,7 +273,13 @@
       "title": "web-artifacts-builder",
       "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
       "category": "engineering",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "react",
+        "tailwind",
+        "javascript",
+        "web"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -222,7 +292,12 @@
       "title": "webapp-testing",
       "description": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.",
       "category": "engineering",
-      "tags": [],
+      "audience": "codex-project",
+      "tags": [
+        "playwright",
+        "web",
+        "testing"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -235,7 +310,11 @@
       "title": "chinese-output-constraint",
       "description": "全局中文输出约束规则。强制 AI 助手在所有交互和产出中优先并完全使用中文，包括模型思考过程、最终回答、生成的文档、代码中的注释、工作流说明等。",
       "category": "productivity",
-      "tags": [],
+      "audience": "codex-core",
+      "tags": [
+        "general",
+        "chinese"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -248,7 +327,11 @@
       "title": "doc-coauthoring",
       "description": "Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.",
       "category": "productivity",
-      "tags": [],
+      "audience": "codex-project",
+      "tags": [
+        "docs",
+        "writing"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -261,7 +344,11 @@
       "title": "docx",
       "description": "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. When Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks",
       "category": "productivity",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "docx",
+        "documents"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -274,7 +361,12 @@
       "title": "github-release-archiver",
       "description": "约束并自动执行 GitHub 版本存档流程步骤。当用户提到“执行 GitHub 存档步骤”、“进行版本归档”、“发布新版本 Release”、“打 Tag 归档”、“项目打包封存”，或需要自动生成/更新带可视化架构图（如 Mermaid 流程图、思维导图）的项目 README 文档时激活。",
       "category": "productivity",
-      "tags": [],
+      "audience": "codex-project",
+      "tags": [
+        "git",
+        "github",
+        "release"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -287,7 +379,11 @@
       "title": "internal-comms",
       "description": "A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident reports, project updates, etc.).",
       "category": "productivity",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "communications",
+        "writing"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -300,7 +396,11 @@
       "title": "pdf",
       "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.",
       "category": "productivity",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "pdf",
+        "documents"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -313,7 +413,11 @@
       "title": "pptx",
       "description": "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks",
       "category": "productivity",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "pptx",
+        "presentations"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -326,7 +430,11 @@
       "title": "skill-creator-cn",
       "description": "创建、修改、改进 skill，并衡量其表现。当用户想从零做一个 skill、改进/调试已有 skill、把刚才对话里的流程\"变成 skill\"、或说\"我想做个 skill 但不知道怎么做\"\"帮我做个 skill\"时使用。也适用于优化 skill 的触发描述、跑评测。Use when the user wants to create, edit, debug, or evaluate a skill (Chinese or English).",
       "category": "productivity",
-      "tags": [],
+      "audience": "codex-project",
+      "tags": [
+        "skill",
+        "chinese"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -339,7 +447,11 @@
       "title": "xlsx",
       "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for: (1) Creating new spreadsheets with formulas and formatting, (2) Reading or analyzing data, (3) Modify existing spreadsheets while preserving formulas, (4) Data analysis and visualization in spreadsheets, or (5) Recalculating formulas",
       "category": "productivity",
-      "tags": [],
+      "audience": "archive",
+      "tags": [
+        "xlsx",
+        "spreadsheet"
+      ],
       "status": "active",
       "score": 10.0,
       "usage_count": 0,
@@ -347,13 +459,15 @@
       "source_type": "custom",
       "path": "source/custom/productivity/xlsx"
     },
-    "antigravity-": {
-      "name": "antigravity-",
+    "antigravity": {
+      "name": "antigravity",
       "title": "Antigravity 全局规则与技能配置",
       "description": "本项目旨在存储和同步可供 Antigravity（AI 助手）在本地全局调用的技能（skills）以及其他全局配置文件（例如 Git 的全局忽略规则）。",
       "category": "engineering",
+      "audience": "archive",
       "tags": [
-        "git"
+        "git",
+        "antigravity"
       ],
       "status": "active",
       "score": 10.0,

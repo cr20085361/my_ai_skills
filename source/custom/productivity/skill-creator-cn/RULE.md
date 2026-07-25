@@ -1,6 +1,11 @@
----
+﻿---
 name: skill-creator-cn
 description: 创建、修改、改进 skill，并衡量其表现。当用户想从零做一个 skill、改进/调试已有 skill、把刚才对话里的流程"变成 skill"、或说"我想做个 skill 但不知道怎么做""帮我做个 skill"时使用。也适用于优化 skill 的触发描述、跑评测。Use when the user wants to create, edit, debug, or evaluate a skill (Chinese or English).
+category: productivity
+audience: codex-project
+tags: [skill, chinese]
+status: active
+score: 10.0
 ---
 
 # Skill Creator

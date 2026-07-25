@@ -3,6 +3,7 @@ name: cst-parametric-modeling
 title: CST Parametric Modeling
 description: Use when building or iterating CST models that must retain internal parameter optimization, including CST Parameter List variables, derived parameters, rebuildable History VBA geometry, Parameter Sweep, Optimizer, and Tuning workflows.
 category: engineering
+audience: codex-project
 tags: [cst, parametric-modeling, parameter-sweep, optimizer, tuning, python, vba]
 status: active
 score: 10.0

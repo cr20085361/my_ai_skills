@@ -1,6 +1,11 @@
----
+﻿---
 name: chinese-output-constraint
 description: 全局中文输出约束规则。强制 AI 助手在所有交互和产出中优先并完全使用中文，包括模型思考过程、最终回答、生成的文档、代码中的注释、工作流说明等。
+category: productivity
+audience: codex-core
+tags: [general, chinese]
+status: active
+score: 10.0
 ---
 
 # 全局中文输出约束规则 (Chinese Output Constraint)

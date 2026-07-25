@@ -1,6 +1,11 @@
----
+﻿---
 name: github-release-archiver
 description: 约束并自动执行 GitHub 版本存档流程步骤。当用户提到“执行 GitHub 存档步骤”、“进行版本归档”、“发布新版本 Release”、“打 Tag 归档”、“项目打包封存”，或需要自动生成/更新带可视化架构图（如 Mermaid 流程图、思维导图）的项目 README 文档时激活。
+category: productivity
+audience: codex-project
+tags: [git, github, release]
+status: active
+score: 10.0
 ---
 
 ## 💡 核心定位与原则

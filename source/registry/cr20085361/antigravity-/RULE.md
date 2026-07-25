@@ -1,9 +1,10 @@
----
-name: antigravity-
+﻿---
+name: antigravity
 title: Antigravity 全局规则与技能配置
 description: 本项目旨在存储和同步可供 Antigravity（AI 助手）在本地全局调用的技能（skills）以及其他全局配置文件（例如 Git 的全局忽略规则）。
 category: engineering
-tags: [git]
+audience: archive
+tags: [git, antigravity]
 status: active
 score: 10.0
 ---

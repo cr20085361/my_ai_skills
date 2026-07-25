@@ -15,6 +15,18 @@ from utils import (
     cli_success, cli_warning, cli_error, cli_info, cli_summary
 )
 
+EXCLUDED_PACKAGE_NAMES = {
+    ".git",
+    ".agent",
+    ".agents",
+    "__pycache__",
+    ".pytest_cache",
+    "temp_git_fetch",
+    "dist",
+}
+
+CODEX_ALLOWED_AUDIENCES = {"codex-core", "codex-project"}
+
 
 def load_active_rules(project_tags=None):
     """
@@ -51,7 +63,7 @@ def load_active_rules(project_tags=None):
                 r_tags = set(t.lower() for t in r_info.get("tags", []))
 
                 # 通用规则始终放行：tags 为空 或 含 "general"
-                if not r_tags or "general" in r_tags:
+                if "general" in r_tags:
                     active_rules.append(r_info)
                 elif r_tags & p_tags:
                     active_rules.append(r_info)
@@ -78,6 +90,7 @@ def get_rule_body_content(rule_path):
 
     try:
         content, _ = read_file_safely(absolute_rule_path)
+        content = content.lstrip("\ufeff")
 
         body = ""
         if content.startswith("---"):
@@ -195,12 +208,12 @@ def compile_for_antigravity(rules, output_dir=None):
             shutil.copy2(src_rule_file, dst_skill_file)
 
             for item in os.listdir(src_dir):
-                if item in ("RULE.md", "override.md"):
+                if item in ("RULE.md", "override.md") or item in EXCLUDED_PACKAGE_NAMES:
                     continue
                 item_src = os.path.join(src_dir, item)
                 item_dst = os.path.join(dst_rule_dir, item)
                 if os.path.isdir(item_src):
-                    shutil.copytree(item_src, item_dst)
+                    shutil.copytree(item_src, item_dst, ignore=package_ignore)
                 else:
                     shutil.copy2(item_src, item_dst)
             success_count += 1
@@ -210,12 +223,72 @@ def compile_for_antigravity(rules, output_dir=None):
     cli_success(f"Antigravity 技能包: {success_count} 个 → {antigravity_dist}")
 
 
+def package_ignore(dir_path, names):
+    ignored = set()
+    for name in names:
+        if name in EXCLUDED_PACKAGE_NAMES or name.endswith(".pyc"):
+            ignored.add(name)
+    return ignored
+
+
+def filter_rules_for_codex(rules):
+    codex_rules = []
+    skipped_count = 0
+    for rule in rules:
+        audience = (rule.get("audience") or "archive").strip().lower()
+        if audience in CODEX_ALLOWED_AUDIENCES:
+            codex_rules.append(rule)
+        else:
+            skipped_count += 1
+    cli_info(f"Codex audience filter: include {len(codex_rules)} | skip {skipped_count}")
+    return codex_rules
+
+
+def compile_for_codex(rules, output_dir=None):
+    """
+    Build a local Codex skill bundle without touching user-global directories.
+    """
+    rules = filter_rules_for_codex(rules)
+    if output_dir:
+        codex_dist = os.path.join(output_dir, ".codex", "skills")
+    else:
+        codex_dist = os.path.join(DIST_DIR, "codex", "skills")
+    if os.path.exists(codex_dist):
+        shutil.rmtree(codex_dist)
+    os.makedirs(codex_dist, exist_ok=True)
+
+    success_count = 0
+    for rule in rules:
+        src_dir = os.path.join(ROOT_DIR, rule["path"])
+        src_rule_file = os.path.join(src_dir, "RULE.md")
+        if not os.path.exists(src_rule_file):
+            continue
+
+        dst_rule_dir = os.path.join(codex_dist, rule["name"])
+        os.makedirs(dst_rule_dir, exist_ok=True)
+        shutil.copy2(src_rule_file, os.path.join(dst_rule_dir, "SKILL.md"))
+
+        for item in os.listdir(src_dir):
+            if item in ("RULE.md", "override.md") or item in EXCLUDED_PACKAGE_NAMES:
+                continue
+            item_src = os.path.join(src_dir, item)
+            item_dst = os.path.join(dst_rule_dir, item)
+            if os.path.isdir(item_src):
+                shutil.copytree(item_src, item_dst, ignore=package_ignore)
+            else:
+                shutil.copy2(item_src, item_dst)
+        success_count += 1
+
+    cli_success(f"Codex local skills: {success_count} -> {codex_dist}")
+
+
 # 编译器映射表，用于 IDE 偏好控制
 COMPILER_MAP = {
     "cursor": compile_for_cursor,
     "windsurf": compile_for_windsurf,
     "cline": compile_for_cline,
     "antigravity": compile_for_antigravity,
+    "codex": compile_for_codex,
 }
 
 

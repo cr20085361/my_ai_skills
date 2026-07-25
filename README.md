@@ -1,133 +1,140 @@
-# PGRMS - Antigravity 全局规则与技能配置系统
+# PGRMS - Personal Global Rules Management System
 
-本项目用于集中管理、编译、同步和归档可供 Antigravity、Cursor、Windsurf、Cline 与 VS Code Copilot 全局调用的规则（Rules）与技能（Skills）。当前仓库同时包含设计类、工程类、生产力类技能，以及一套可重复执行的扫描、编译、部署和归档流程。
+PGRMS stores, validates, compiles, and deploys local AI rules and skills for tools such as Codex, Cursor, Windsurf, Cline, Antigravity/Gemini, and VS Code Copilot.
 
----
+The repository is optimized for safe coding-agent use: deployment is preview-first, generated and temporary artifacts are ignored, and tests only collect the repository's own test suite.
 
-## 一眼看清系统
+## What It Does
 
-### 1. 架构一眼看清
-展示项目源目录、编译脚本、技能分类和编译产物之间的关系。
+- Scans `source/custom/` and `source/registry/` into `metadata.json`.
+- Compiles rules for Cursor, Windsurf, Cline, Antigravity/Gemini, and Codex.
+- Supports project binding through `.pgrms.json` so only matching tagged skills are injected.
+- Provides a static `dashboard.html` generated from metadata.
+- Supports CST-related skills for Python control, History VBA modeling, and parametric CST workflows.
+- Can deploy skills globally, but only when explicitly requested with `--apply`.
 
-```mermaid
-flowchart TD
-    subgraph ROOT ["PGRMS 全局规则管理系统"]
-        direction TB
-        A["source/ 源规则目录"] --> B["custom/ 原创规则"]
-        A --> C["registry/ 第三方规则"]
+## Recommended Codex Workflow
 
-        B --> B1["design/ 设计类技能"]
-        B --> B2["engineering/ 工程类技能"]
-        B --> B3["productivity/ 生产力技能"]
-
-        B2 --> B2a["cst-control-skill"]
-        B2 --> B2b["cst-history-macro-skill"]
-        B2 --> B2c["cst-parametric-modeling"]
-        B2 --> B2d["mcp-builder / matlab / webapp-testing"]
-
-        D["scripts/ 编译与系统脚本"] --> D1["pgrms.py 主控 CLI"]
-        D --> D2["compiler.py 多目标编译器"]
-        D --> D3["dashboard.py 看板生成"]
-
-        E["dist/ 编译输出"] --> E1["cursor/.cursorrules"]
-        E --> E2["windsurf/.windsurfrules"]
-        E --> E3["cline/.clinerules"]
-        E --> E4["antigravity/skills/ 全局技能包"]
-    end
-```
-
-### 2. 逻辑一眼看清
-展示从扫描规则到生成元数据、编译产物，再到部署全局技能的核心运行链路。
-
-```mermaid
-flowchart LR
-    A["执行 deploy.ps1"] --> B["运行 pgrms.py scan"]
-    B --> C["扫描 source/ 下 RULE.md"]
-    C --> D["更新 metadata.json"]
-    D --> E["刷新 dashboard.html"]
-    E --> F["运行 pgrms.py compile --target all"]
-    F --> G["生成 dist/ 多平台产物"]
-    G --> H["同步 dist/antigravity/skills"]
-    H --> I["写入 ~/.agent/skills 与 ~/.agents/skills"]
-    I --> J["运行 sync-vscode"]
-    J --> K["生成 VS Code 全局 instructions"]
-```
-
-### 3. 迭代一眼看清
-展示版本节点和本次归档的演进脉络。
-
-```mermaid
-timeline
-    title PGRMS 项目迭代时间线
-    2026-05-20 : v0.1.0 初始备份 Git 全局规则与本地技能配置
-    2026-05-21 : v1.0.0 引入 PGRMS 编译框架与可视化 README
-    2026-05-22 : v1.1.0 新增 VS Code Copilot 全局技能同步
-    2026-05-22 : v1.1.1 清理 pyc 缓存并补齐仓库级忽略规则
-    2026-06-11 : v1.1.2 增加仓库级 GitHub 归档指令文件
-    2026-06-23 : v1.2.0 升级为 Codex 友好的规则仓库并补齐本地安全部署
-    2026-07-24 : v1.3.0 新增三项 CST 工程技能并刷新元数据与看板
-```
-
----
-
-## 本次版本归档
-
-### v1.3.0（2026-07-24）
-- **[NEW]** 新增 `cst-control-skill`，用于 CST Studio Suite 2026 SP2 的 Python 连接、工程打开/创建、History 注入与结果读取。
-- **[NEW]** 新增 `cst-history-macro-skill`，用于通过 History List 与 VBA 片段驱动可回放、可调试的 CST 建模流程。
-- **[NEW]** 新增 `cst-parametric-modeling`，用于保留 CST 内部参数、支持 `Parameter Sweep`、`Optimizer` 与 `Tuning` 的参数化建模。
-- **[OPS]** 重新扫描规则索引，更新 `metadata.json`，使新增技能可被编译链路和看板识别。
-- **[DOC]** 刷新 `README.md` 的架构图、运行图和时间线，确保 GitHub 归档版本可一眼看清。
-
----
-
-## 给 AI 助手的自动部署指令
-
-当你在本仓库内执行全局配置部署时，优先使用下面的标准流程：
-
-1. 一键部署：
+For Codex programming sessions, use local validation and local skill output first:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\deploy.ps1
+python scripts/pgrms.py scan
+python scripts/pgrms.py compile --target codex
+python -m pytest -q
+python scripts/validate_repository.py
 ```
 
-2. 底层部署逻辑：
-- 扫描 `source/` 下所有 `RULE.md`，重建 `metadata.json`
-- 编译多平台规则产物到 `dist/`
-- 将 `dist/antigravity/skills/` 同步到 `~/.agent/skills/`
-- 将相同技能镜像同步到 `~/.agents/skills/`
-- 生成并同步 VS Code Copilot 用户级全局 instructions
-- 覆盖 `.gitignore_global` 与 `~/.gemini/GEMINI.md` 等全局配置文件
+`compile --target codex` writes local skills to `dist/codex/skills` by default. When compiling for a bound project with `--path`, Codex skills are written to that project's `.codex/skills` directory.
 
-3. CST 相关技能：
+Codex compilation only includes rules with `audience: codex-core` or `audience: codex-project`. Rules marked `archive` stay out of the generated Codex bundle.
+
+For documentation-oriented skills such as `doc-coauthoring`, add matching project tags like `docs` or `writing`; they are no longer globally injected by default.
+
+## Safe Deployment
+
+Deployment is dry-run by default:
+
+```powershell
+python scripts/pgrms.py deploy
+```
+
+This scans and compiles, then prints the user-global targets that would be affected. It does not write `~/.agent`, `~/.agents`, VS Code prompts, `~/.gemini`, or global Git config.
+
+To apply a real global deployment:
+
+```powershell
+python scripts/pgrms.py deploy --apply
+```
+
+To test global deployment without touching your real HOME:
+
+```powershell
+python scripts/pgrms.py deploy --apply --home .\temp_test_project\fake_home
+```
+
+Wrappers follow the same policy:
+
+```powershell
+.\deploy.ps1
+.\deploy.ps1 -Apply
+```
+
+```bash
+./deploy.sh
+./deploy.sh --apply
+```
+
+Real deployments create logs under `.pgrms-deploy-logs` in the selected HOME and back up overwritten skill directories before replacement.
+
+## Core Commands
+
+```powershell
+python scripts/pgrms.py scan
+python scripts/pgrms.py list --sort score
+python scripts/pgrms.py compile --target all
+python scripts/pgrms.py compile --target codex
+python scripts/pgrms.py bind --path <project> --tags python,git --ide codex --force
+python scripts/pgrms.py deploy
+python scripts/pgrms.py deploy --apply
+```
+
+## Repository Quality Gates
+
+```powershell
+python -m py_compile scripts\pgrms.py scripts\compiler.py scripts\utils.py scripts\dashboard.py scripts\evaluator.py scripts\fetcher.py scripts\validate_repository.py
+python -m pytest -q
+python scripts\validate_repository.py
+```
+
+CI runs the same checks on push and pull request.
+
+## Rule Authoring Contract
+
+Every `RULE.md` should include normalized frontmatter:
+
+```markdown
+---
+name: example-skill
+description: Short trigger-oriented description.
+category: engineering
+audience: codex-project
+tags: [python, testing]
+status: active
+score: 10.0
+---
+```
+
+Rule names must be lowercase kebab-case. Empty `tags` are not treated as global rules during project-bound compilation; use `general` explicitly for rules that should always load.
+
+Use `audience: codex-core` for a very small set of always-allowed Codex rules, `audience: codex-project` for project-scoped rules, and `audience: archive` for rules that should not enter the default Codex bundle.
+
+## CST Skills
+
+The main branch now also carries these CST-focused engineering skills:
+
 - `cst-control-skill`
 - `cst-history-macro-skill`
 - `cst-parametric-modeling`
 
-以上三项技能从 `v1.3.0` 起纳入仓库的正式归档版本。
+These cover CST Studio Suite Python control, reproducible History/VBA modeling, and parameter-preserving CST workflows.
 
----
+## Release History
 
-## 历史版本
+### v1.3.0 - 2026-07-25
 
-### v1.2.0（2026-06-23）
-- **[OPS]** 将 PGRMS 升级为更安全的 Codex 友好型规则仓库
-- **[NEW]** 增加默认 dry-run 部署、项目本地 Codex 编译输出与 `.codex/skills` 支持
-- **[REF]** 补齐仓库级校验、部署日志、规则受众治理与本地验证路径
+- Added the three CST engineering skills listed above.
+- Refreshed repository metadata and dashboard generation inputs.
+- Consolidated the former `release-v1.1.2` branch back into `main` so ongoing maintenance happens on a single branch.
 
-### v1.1.2（2026-06-11）
-- **[DOC]** 新增仓库级 `.github/instructions/github-release-archiver.instructions.md`
-- **[OPS]** 为 GitHub 归档流程补齐仓库内联指令入口
+### v1.2.0 - 2026-06-23
 
-### v1.1.1（2026-05-22）
-- **[REF]** 新增仓库根级 `.gitignore`，统一忽略 `__pycache__/`、`*.py[cod]` 与 `.pytest_cache/`
-- **[REF]** 从 Git 索引中移除历史缓存产物，修复仓库污染问题
+- Hardened Codex skill governance and deployment behavior.
+- Added dry-run-first deployment, project-local Codex output, and repository validation paths.
 
-### v1.1.0（2026-05-22）
-- **[NEW]** 新增 `~/.agents/skills` 镜像部署，覆盖 VS Code Copilot 全局技能同步
-- **[NEW]** 新增 `sync-vscode` 指令，支持将中文输出约束同步为用户级 instructions
+### v1.1.2 - 2026-06-11
 
-### v1.0.0（2026-05-21）
-- **[NEW]** 引入 `skill-creator-cn`
-- **[NEW]** 引入 `github-release-archiver`
-- **[REF]** 完成 `source/custom/` 分类化重构
+- Added repository-level GitHub release archiver instructions.
+
+## Branching Policy
+
+This repository is now managed from `main` only. Release and maintenance work should be merged back into `main` instead of being kept on long-lived side branches.

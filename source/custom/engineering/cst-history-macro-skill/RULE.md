@@ -3,6 +3,7 @@ name: cst-history-macro-skill
 title: CST History List and VBA Modeling
 description: Use when an AI agent must create or modify CST Studio Suite 2026 geometry through History List/VBA snippets injected from Python, including CST parameters, materials, primitives, curves, lofts, boolean operations, transforms, imports, rebuilds, and History debugging.
 category: engineering
+audience: codex-project
 tags: [cst, history-list, vba, python, geometry, parametric-modeling]
 status: active
 score: 10.0

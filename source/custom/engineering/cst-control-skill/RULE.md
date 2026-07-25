@@ -3,6 +3,7 @@ name: cst-control-skill
 title: CST Studio Suite Python Control
 description: Use when an AI agent needs to connect to, open, create, save, or inspect CST Studio Suite 2026/SP2 projects through Python, including CST installation discovery, cst.interface/cst.results imports, script execution, and automation failure diagnosis.
 category: engineering
+audience: codex-project
 tags: [cst, python, electromagnetic, antenna, automation, parametric-modeling]
 status: active
 score: 10.0

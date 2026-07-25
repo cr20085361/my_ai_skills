@@ -15,7 +15,8 @@ sys.path.insert(0, SCRIPTS_DIR)
 
 from pgrms import (
     run_binding, run_touching, scan_repository,
-    deploy_global_skill_packages, deploy_vscode_global_instructions
+    deploy_global_skill_packages, deploy_vscode_global_instructions,
+    run_deploy
 )
 from compiler import run_compilation, get_rule_body_content
 from utils import METADATA_FILE, safe_write_json, read_file_safely
@@ -122,8 +123,8 @@ class TestPGRMSSystem(unittest.TestCase):
         self.assertIn("chinese-output-constraint", content)
         # frontend-design 的 tags 是 ["react","vue","css","javascript","tailwind"]，与 ["matlab"] 无交集，应被过滤
         self.assertNotIn("frontend-design", content, "frontend-design 应被过滤但未被过滤！")
-        # slack-gif-creator 的 tags 是 ["general"]，应放行
-        self.assertIn("slack-gif-creator", content)
+        # slack-gif-creator 与 matlab 无标签交集，且空 tags 不再全局放行
+        self.assertNotIn("slack-gif-creator", content)
 
         print("=== 测试 3 通过 ===")
 
@@ -240,6 +241,110 @@ class TestPGRMSSystem(unittest.TestCase):
         self.assertIn("全局中文输出约束规则", content)
         self.assertIn("description:", content)
         print("=== 测试 8 通过 ===")
+
+    def test_9_deploy_dry_run_does_not_write_fake_home(self):
+        """deploy 默认 dry-run，不应写入 fake HOME。"""
+        fake_home_dir = os.path.join(self.temp_project_dir, "fake_home_dry_run")
+
+        run_deploy(target="codex", apply=False, home_dir=fake_home_dir)
+
+        self.assertFalse(os.path.exists(fake_home_dir), "dry-run 不应创建 fake HOME")
+
+    def test_10_deploy_apply_fake_home_writes_only_fake_home(self):
+        """deploy --apply --home 写入 fake HOME 并生成日志。"""
+        fake_home_dir = os.path.join(self.temp_project_dir, "fake_home_apply")
+
+        run_deploy(target="antigravity", apply=True, home_dir=fake_home_dir)
+
+        self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".agent", "skills")))
+        self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".agents", "skills")))
+        self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".gitignore_global")))
+        self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".gemini", "GEMINI.md")))
+        self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".pgrms-deploy-logs")))
+
+    def test_11_codex_compile_outputs_local_bundle(self):
+        """compile --target codex 输出项目局部 .codex/skills。"""
+        binding_info = {
+            "bound_at": "2026-05-20 13:00:00",
+            "project_path": self.temp_project_dir.replace("\\", "/"),
+            "tags": ["general"],
+            "preferred_ide": "codex"
+        }
+        config_path = os.path.join(self.temp_project_dir, ".pgrms.json")
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(binding_info, f, indent=2)
+
+        run_compilation(target="codex", project_path=self.temp_project_dir)
+
+        codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
+        self.assertTrue(os.path.exists(codex_skills_dir))
+        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "chinese-output-constraint", "SKILL.md")))
+
+
+    def test_12_scan_repository_includes_audience_metadata(self):
+        """scan 后的 metadata.json 应包含 audience 字段。"""
+        scan_repository()
+
+        with open(self.metadata_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        self.assertEqual(data["rules"]["chinese-output-constraint"]["audience"], "codex-core")
+        self.assertEqual(data["rules"]["internal-comms"]["audience"], "archive")
+
+    def test_13_codex_compile_skips_archive_rules(self):
+        """codex 编译默认只保留 codex-core 和 codex-project。"""
+        binding_info = {
+            "bound_at": "2026-05-20 13:00:00",
+            "project_path": self.temp_project_dir.replace("\\", "/"),
+            "tags": ["general", "react", "javascript", "tailwind", "web", "testing"],
+            "preferred_ide": "codex"
+        }
+        config_path = os.path.join(self.temp_project_dir, ".pgrms.json")
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(binding_info, f, indent=2)
+
+        run_compilation(target="codex", project_path=self.temp_project_dir)
+
+        codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
+        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "frontend-design", "SKILL.md")))
+        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "ui-ux-pro-max")))
+        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "internal-comms")))
+
+
+    def test_14_doc_coauthoring_not_injected_without_docs_tags(self):
+        """doc-coauthoring 不应再因 general 标签默认注入。"""
+        binding_info = {
+            "bound_at": "2026-05-20 13:00:00",
+            "project_path": self.temp_project_dir.replace("\\", "/"),
+            "tags": ["git", "python", "mcp", "release", "skill"],
+            "preferred_ide": "codex"
+        }
+        config_path = os.path.join(self.temp_project_dir, ".pgrms.json")
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(binding_info, f, indent=2)
+
+        run_compilation(target="codex", project_path=self.temp_project_dir)
+
+        codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
+        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "doc-coauthoring")))
+        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "mcp-builder", "SKILL.md")))
+
+    def test_15_doc_coauthoring_injected_with_docs_tag(self):
+        """doc-coauthoring 只在 docs/writing 项目中注入。"""
+        binding_info = {
+            "bound_at": "2026-05-20 13:00:00",
+            "project_path": self.temp_project_dir.replace("\\", "/"),
+            "tags": ["docs", "writing"],
+            "preferred_ide": "codex"
+        }
+        config_path = os.path.join(self.temp_project_dir, ".pgrms.json")
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(binding_info, f, indent=2)
+
+        run_compilation(target="codex", project_path=self.temp_project_dir)
+
+        codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
+        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "doc-coauthoring", "SKILL.md")))
 
 
 if __name__ == "__main__":
