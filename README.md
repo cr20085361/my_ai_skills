@@ -4,7 +4,7 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 
 这个仓库面向代码代理与本地自动化场景，重点做了几件事：
 
-- 统一维护 `source/` 下的 21 条原创规则（design 5 / engineering 8 / productivity 8）
+- 统一维护 `source/` 下的 22 条原创规则（design 5 / engineering 9 / productivity 8）
 - 通过 `metadata.json` 与 `dashboard.html` 提供可检索、可视化的规则索引
 - 支持面向不同 IDE/代理的多目标编译
 - 支持项目级绑定与按标签筛选注入
@@ -16,7 +16,7 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 graph TB
     subgraph SRC["source/ 规则源"]
         D["design/ (5)"]
-        E["engineering/ (8)"]
+        E["engineering/ (9)"]
         P["productivity/ (8)"]
     end
 
@@ -86,6 +86,8 @@ timeline
            : Codex 全局部署补齐
     v1.4.1 : 技能库清理（27→21）
            : 命名规范修复与广告移除
+    v1.5.0 : 新增安装包版本命名规范
+           : 3 个外部技能同步至上游最新
 ```
 
 ## 项目作用
@@ -214,6 +216,13 @@ score: 10.0
 - 原生 Bend、Transform、Boolean、WCS 与复杂几何操作编排
 
 ## 发布历史
+
+### v1.5.0 - 2026-07-26
+
+- 新增 `installer-version-naming` 技能：离线安装包版本命名规范（程序名含版本号、六处一致、Inno Setup / NSIS 模板）
+- 同步 `frontend-design` 至上游 v1.1.0（anthropics/claude-code）：全新两遍设计流程、反 AI 默认风格校准、UX 文案指导
+- 同步 `matlab` 至上游 v1.1（K-Dense-AI, 2026-07-23）：安全边界、R2026a 钉定、7 步工作流、Python 互操作
+- 同步 `ui-ux-pro-max` 至上游 v2.11.0（nextlevelbuilder）：84 styles / 192 palettes / 22 stacks、设计系统与表盘调节
 
 ### v1.4.1 - 2026-07-26
 
