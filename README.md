@@ -4,11 +4,89 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 
 这个仓库面向代码代理与本地自动化场景，重点做了几件事：
 
-- 统一维护 `source/` 下的原创规则与第三方规则
+- 统一维护 `source/` 下的 21 条原创规则（design 5 / engineering 8 / productivity 8）
 - 通过 `metadata.json` 与 `dashboard.html` 提供可检索、可视化的规则索引
 - 支持面向不同 IDE/代理的多目标编译
 - 支持项目级绑定与按标签筛选注入
 - 支持全局部署，并区分 Antigravity/Gemini、VS Code Copilot 与 Codex 的落地目录
+
+## 架构一眼清
+
+```mermaid
+graph TB
+    subgraph SRC["source/ 规则源"]
+        D["design/ (5)"]
+        E["engineering/ (8)"]
+        P["productivity/ (8)"]
+    end
+
+    subgraph TOOLCHAIN["scripts/ 工具链"]
+        SCAN["pgrms.py scan"]
+        COMPILE["compiler.py compile"]
+        EVAL["evaluator.py evaluate"]
+        DEPLOY["pgrms.py deploy"]
+        DASH["dashboard.py"]
+    end
+
+    subgraph OUTPUT["产物输出"]
+        META["metadata.json"]
+        BOARD["dashboard.html"]
+        DIST["dist/ 多目标编译"]
+    end
+
+    subgraph TARGETS["部署目标"]
+        CODEX["~/.codex/skills"]
+        AGENT["~/.agent/skills"]
+        AGENTS["~/.agents/skills"]
+        GEMINI["~/.gemini/GEMINI.md"]
+        VSCODE["VS Code prompts"]
+    end
+
+    SRC --> SCAN --> META
+    META --> COMPILE --> DIST
+    META --> DASH --> BOARD
+    DIST --> DEPLOY
+    DEPLOY --> CODEX
+    DEPLOY --> AGENT
+    DEPLOY --> AGENTS
+    DEPLOY --> GEMINI
+    DEPLOY --> VSCODE
+```
+
+## 逻辑一眼清
+
+```mermaid
+flowchart LR
+    A["scan 扫描源目录"] --> B["metadata.json 索引"]
+    B --> C{"compile 编译"}
+    C -->|"单文件目标"| D["Cursor / Windsurf / Cline"]
+    C -->|"目录目标"| E["Antigravity / Codex"]
+    B --> F["evaluate 健康评估"]
+    F --> G["dashboard.html 看板"]
+    E --> H{"deploy 部署"}
+    H -->|"--apply"| I["全局技能目录同步"]
+    H -->|"默认 dry-run"| J["仅展示部署计划"]
+    K["bind 项目绑定"] -->|".pgrms.json 标签过滤"| C
+```
+
+## 迭代一眼清
+
+```mermaid
+timeline
+    title PGRMS 版本演进
+    v1.0.0 : 骨架搭建
+           : 基础 scan/compile/deploy 工具链
+    v1.1.0 : VS Code Copilot 全局技能同步
+           : 中文指令部署
+    v1.2.0 : Codex 技能治理与部署强化
+           : 预演模式与仓库验证
+    v1.3.0 : 新增 CST 工程技能
+           : 合并 release 分支至 main
+    v1.4.0 : CST 增强（4 技能）
+           : Codex 全局部署补齐
+    v1.4.1 : 技能库清理（27→21）
+           : 命名规范修复与广告移除
+```
 
 ## 项目作用
 
@@ -136,6 +214,13 @@ score: 10.0
 - 原生 Bend、Transform、Boolean、WCS 与复杂几何操作编排
 
 ## 发布历史
+
+### v1.4.1 - 2026-07-26
+
+- 清理 6 个无效/低价值技能（brand-guidelines、internal-comms、web-artifacts-builder、skill-creator、antigravity、slack-gif-creator），技能库从 27 精简至 21
+- 修复 `optimization_specialist` 目录命名为连字符规范（`code-iteration-optimization-specialist`）
+- 移除 matlab 技能中嵌入的第三方商业广告
+- README 新增三张 Mermaid 可视化图表（架构/逻辑/迭代）
 
 ### v1.4.0 - 2026-07-25
 
