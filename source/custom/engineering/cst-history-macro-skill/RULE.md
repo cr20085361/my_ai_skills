@@ -52,6 +52,28 @@ Good descriptions state:
 Avoid putting one-off project notes in this skill. Keep project-specific
 parameter names and formulas in that project's own documentation.
 
+## Advanced native operations
+
+Treat CST native operations as a recorded-operation workflow, not as an API to
+guess. Use one History item for each logical operation and keep the pre-operation
+solids named and selectable.
+
+1. Build the parameterized flat or primitive geometry first.
+2. In CST GUI, perform the operation once and copy its History item verbatim.
+3. Replace dimensions with existing CST parameter names; retain the GUI's
+   object-selection and WCS setup commands.
+4. Rebuild each representative state before composing a second operation.
+
+For a verified native cylindrical-bend pattern, select every named solid with
+`Bending.Shape`, activate a local WCS at the bend reference plane, then call
+`Bending.FlexBend` with `.Centralized "True"` and a parameterized radius. The
+full audited pattern and its state checks are in
+`../cst-advanced-geometry-operations/references/native-operations.md`.
+
+Do not invent History syntax for Boolean, Transform, Mirror, Array, Sweep, or
+Blend operations. Record it from the target CST version first; selection order,
+active WCS, and body-vs-sheet behavior are operation-specific.
+
 ## Reliable Primitive Pattern
 
 ```vb

@@ -48,6 +48,27 @@ Keep the following priorities fixed:
    high-frequency boundaries.
 8. Produce a reusable `.cst` template.
 
+## Geometry-state parameters
+
+When a model can switch between planar and curved forms, model the state inside
+CST rather than maintaining unrelated geometry files. Use an explicit state
+parameter and derived quantities, for example:
+
+- `panel_arc_deg = 0` for a flat panel, `0 < panel_arc_deg < 360` for an open
+  cylindrical arc, and `360` for a closed cylinder.
+- `layer0_radius` as the inner reference-plane radius; subsequent layer
+  reference radii are `layer0_radius + i*grid_layer_d`.
+- `panel_length_curved = layer0_radius*panel_arc_deg*pi/180` as the unfolded
+  bend length for a nonzero arc.
+
+Validate at least the flat, open-arc, and closed-cylinder states after every
+History change. Keep metal thickness as a separate branch: zero thickness may
+use PEC sheets, while positive thickness uses solids; do not sweep through zero
+in a single CST run.
+
+For complex operation sequencing and verified Bend details, use
+`cst-advanced-geometry-operations` together with this skill.
+
 ## Warnings
 
 - Do not treat DXF import as the final parametric-modeling route.

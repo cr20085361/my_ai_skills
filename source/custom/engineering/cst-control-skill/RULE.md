@@ -56,6 +56,23 @@ Use `DesignEnvironment.connect_to_any_or_new()` when you are allowed to open or
 reuse CST. If several CST frontends are running and connection is ambiguous,
 start from a clean CST session or pass the project path explicitly.
 
+## Complex-operation execution contract
+
+For Bend, boolean, transform, array, or coordinate-system work, keep the
+automation transport deliberately simple:
+
+1. Build or open a copy of the project, never the only validated source file.
+2. Make one operation in CST's GUI when its History syntax is not already
+   verified, then capture the exact generated History block.
+3. Inject one named operation per `add_to_history` item and save immediately.
+4. Reopen the project or change one parameter and rebuild before adding the
+   next operation.
+5. Report the output project path, latest History caption, and the tested
+   parameter states.
+
+This separates Python connection failures from CST geometry failures and keeps
+complex modeling reproducible.
+
 ## Result Reading
 
 Use `cst.results.ProjectFile` after a solver run when result data exists:

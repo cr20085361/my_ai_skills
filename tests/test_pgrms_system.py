@@ -251,13 +251,14 @@ class TestPGRMSSystem(unittest.TestCase):
         self.assertFalse(os.path.exists(fake_home_dir), "dry-run 不应创建 fake HOME")
 
     def test_10_deploy_apply_fake_home_writes_only_fake_home(self):
-        """deploy --apply --home 写入 fake HOME 并生成日志。"""
+        """deploy --apply --home 会同步三套技能目录并生成日志。"""
         fake_home_dir = os.path.join(self.temp_project_dir, "fake_home_apply")
 
-        run_deploy(target="antigravity", apply=True, home_dir=fake_home_dir)
+        run_deploy(target="all", apply=True, home_dir=fake_home_dir)
 
         self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".agent", "skills")))
         self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".agents", "skills")))
+        self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".codex", "skills")))
         self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".gitignore_global")))
         self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".gemini", "GEMINI.md")))
         self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".pgrms-deploy-logs")))

@@ -450,6 +450,14 @@ def get_global_skill_dirs(home_dir=None):
     ]
 
 
+def get_codex_skill_dir(home_dir=None):
+    """
+    返回 Codex 用户级全局技能目录。
+    """
+    base_home = home_dir or os.path.expanduser("~")
+    return os.path.join(base_home, ".codex", "skills")
+
+
 def make_deploy_log_dir(home_dir=None):
     base_home = home_dir or os.path.expanduser("~")
     log_dir = os.path.join(base_home, GLOBAL_DEPLOY_LOG_DIRNAME)
@@ -471,7 +479,7 @@ def backup_path_for(target_path, backup_root):
     return os.path.join(backup_root, rel_name)
 
 
-def deploy_global_skill_packages(dist_skills, home_dir=None, backup=True):
+def deploy_global_skill_packages(dist_skills, home_dir=None, backup=True, target_dirs=None):
     """
     将编译好的技能包同步到所有受支持的全局目录。
     返回成功写入的目录列表。
@@ -487,7 +495,7 @@ def deploy_global_skill_packages(dist_skills, home_dir=None, backup=True):
         backup_root = os.path.join(make_deploy_log_dir(home_dir), "backups", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
         os.makedirs(backup_root, exist_ok=True)
 
-    for target_dir in get_global_skill_dirs(home_dir):
+    for target_dir in (target_dirs or get_global_skill_dirs(home_dir)):
         normalized_dir = os.path.normpath(target_dir)
         if normalized_dir in seen_dirs:
             continue
@@ -608,6 +616,7 @@ def build_deploy_plan(home_dir=None):
     return [
         ("skills", os.path.join(home, ".agent", "skills")),
         ("skills", os.path.join(home, ".agents", "skills")),
+        ("codex", os.path.join(home, ".codex", "skills")),
         ("gitignore", os.path.join(home, ".gitignore_global")),
         ("gemini", os.path.join(home, ".gemini", "GEMINI.md")),
         ("vscode", get_vscode_user_prompts_dir(home)),
@@ -692,12 +701,28 @@ def run_deploy(project_path=None, target="all", apply=False, home_dir=None):
         if vscode_file:
             log_lines.append(f"VS Code instructions -> {vscode_file}")
 
-        # 部署 Antigravity 全局技能包
-        dist_skills = os.path.join(DIST_DIR, "antigravity", "skills")
-        deployed_dirs = deploy_global_skill_packages(dist_skills, home_dir)
+        # 部署 Antigravity/Gemini 与 VS Code Copilot 全局技能包
+        antigravity_dist_skills = os.path.join(DIST_DIR, "antigravity", "skills")
+        deployed_dirs = deploy_global_skill_packages(
+            antigravity_dist_skills,
+            home_dir,
+            target_dirs=get_global_skill_dirs(home_dir),
+        )
         if deployed_dirs:
-            cli_success("全局技能包已同步至 ~/.agent/skills/ 与 ~/.agents/skills/ (VS Code Copilot)。")
+            cli_success("全局技能包已同步至 ~/.agent/skills/ 与 ~/.agents/skills/。")
             log_lines.extend([f"skills -> {d}" for d in deployed_dirs])
+
+        # 部署 Codex 全局技能包
+        codex_dist_skills = os.path.join(DIST_DIR, "codex", "skills")
+        codex_target_dir = get_codex_skill_dir(home_dir)
+        deployed_codex_dirs = deploy_global_skill_packages(
+            codex_dist_skills,
+            home_dir,
+            target_dirs=[codex_target_dir],
+        )
+        if deployed_codex_dirs:
+            cli_success("Codex 全局技能包已同步至 ~/.codex/skills/。")
+            log_lines.extend([f"codex-skills -> {d}" for d in deployed_codex_dirs])
         log_file = write_deploy_log(home_dir, log_lines)
         cli_info(f"Global deployment log: {log_file}")
     else:

@@ -133,6 +133,27 @@
       "source_type": "custom",
       "path": "source/custom/design/ui-ux-pro-max"
     },
+    "cst-advanced-geometry-operations": {
+      "name": "cst-advanced-geometry-operations",
+      "title": "CST Advanced Geometry Operations",
+      "description": "Use when an AI agent must create, parameterize, validate, or debug complex CST Studio Suite geometry operations beyond primitives, including native cylindrical Bend, local coordinate systems, transforms, booleans, arrays, sweep/loft sequencing, sheet-versus-solid branches, and planar-to-curved state changes through Python-injected History VBA.",
+      "category": "engineering",
+      "audience": "codex-project",
+      "tags": [
+        "cst",
+        "geometry",
+        "history-list",
+        "python",
+        "vba",
+        "parametric-modeling"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/cst-advanced-geometry-operations"
+    },
     "cst-control-skill": {
       "name": "cst-control-skill",
       "title": "CST Studio Suite Python Control",
