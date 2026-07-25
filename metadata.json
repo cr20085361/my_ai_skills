@@ -19,23 +19,6 @@
       "source_type": "custom",
       "path": "source/custom/design/algorithmic-art"
     },
-    "brand-guidelines": {
-      "name": "brand-guidelines",
-      "title": "brand-guidelines",
-      "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.",
-      "category": "design",
-      "audience": "archive",
-      "tags": [
-        "brand",
-        "design"
-      ],
-      "status": "active",
-      "score": 10.0,
-      "usage_count": 0,
-      "last_used_date": "N/A",
-      "source_type": "custom",
-      "path": "source/custom/design/brand-guidelines"
-    },
     "canvas-design": {
       "name": "canvas-design",
       "title": "canvas-design",
@@ -74,24 +57,6 @@
       "last_used_date": "N/A",
       "source_type": "custom",
       "path": "source/custom/design/frontend-design"
-    },
-    "slack-gif-creator": {
-      "name": "slack-gif-creator",
-      "title": "slack-gif-creator",
-      "description": "Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.\"",
-      "category": "design",
-      "audience": "archive",
-      "tags": [
-        "gif",
-        "slack",
-        "design"
-      ],
-      "status": "active",
-      "score": 10.0,
-      "usage_count": 0,
-      "last_used_date": "N/A",
-      "source_type": "custom",
-      "path": "source/custom/design/slack-gif-creator"
     },
     "theme-factory": {
       "name": "theme-factory",
@@ -132,6 +97,24 @@
       "last_used_date": "N/A",
       "source_type": "custom",
       "path": "source/custom/design/ui-ux-pro-max"
+    },
+    "code-iteration-optimization-specialist": {
+      "name": "code-iteration-optimization-specialist",
+      "title": "code-iteration-optimization-specialist",
+      "description": "Expert in iteratively optimizing MATLAB/Python code with strict version control, Chinese documentation, and stability guarantees.",
+      "category": "engineering",
+      "audience": "codex-project",
+      "tags": [
+        "matlab",
+        "python",
+        "optimization"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/code-iteration-optimization-specialist"
     },
     "cst-advanced-geometry-operations": {
       "name": "cst-advanced-geometry-operations",
@@ -254,60 +237,6 @@
       "source_type": "custom",
       "path": "source/custom/engineering/mcp-builder"
     },
-    "code-iteration-optimization-specialist": {
-      "name": "code-iteration-optimization-specialist",
-      "title": "code-iteration-optimization-specialist",
-      "description": "Expert in iteratively optimizing MATLAB/Python code with strict version control, Chinese documentation, and stability guarantees.",
-      "category": "engineering",
-      "audience": "codex-project",
-      "tags": [
-        "matlab",
-        "python",
-        "optimization"
-      ],
-      "status": "active",
-      "score": 10.0,
-      "usage_count": 0,
-      "last_used_date": "N/A",
-      "source_type": "custom",
-      "path": "source/custom/engineering/optimization_specialist"
-    },
-    "skill-creator": {
-      "name": "skill-creator",
-      "title": "skill-creator",
-      "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
-      "category": "engineering",
-      "audience": "archive",
-      "tags": [
-        "skill",
-        "engineering"
-      ],
-      "status": "active",
-      "score": 10.0,
-      "usage_count": 0,
-      "last_used_date": "N/A",
-      "source_type": "custom",
-      "path": "source/custom/engineering/skill-creator"
-    },
-    "web-artifacts-builder": {
-      "name": "web-artifacts-builder",
-      "title": "web-artifacts-builder",
-      "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
-      "category": "engineering",
-      "audience": "archive",
-      "tags": [
-        "react",
-        "tailwind",
-        "javascript",
-        "web"
-      ],
-      "status": "active",
-      "score": 10.0,
-      "usage_count": 0,
-      "last_used_date": "N/A",
-      "source_type": "custom",
-      "path": "source/custom/engineering/web-artifacts-builder"
-    },
     "webapp-testing": {
       "name": "webapp-testing",
       "title": "webapp-testing",
@@ -395,23 +324,6 @@
       "source_type": "custom",
       "path": "source/custom/productivity/github-release-archiver"
     },
-    "internal-comms": {
-      "name": "internal-comms",
-      "title": "internal-comms",
-      "description": "A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident reports, project updates, etc.).",
-      "category": "productivity",
-      "audience": "archive",
-      "tags": [
-        "communications",
-        "writing"
-      ],
-      "status": "active",
-      "score": 10.0,
-      "usage_count": 0,
-      "last_used_date": "N/A",
-      "source_type": "custom",
-      "path": "source/custom/productivity/internal-comms"
-    },
     "pdf": {
       "name": "pdf",
       "title": "pdf",
@@ -479,30 +391,6 @@
       "last_used_date": "N/A",
       "source_type": "custom",
       "path": "source/custom/productivity/xlsx"
-    },
-    "antigravity": {
-      "name": "antigravity",
-      "title": "Antigravity 全局规则与技能配置",
-      "description": "本项目旨在存储和同步可供 Antigravity（AI 助手）在本地全局调用的技能（skills）以及其他全局配置文件（例如 Git 的全局忽略规则）。",
-      "category": "engineering",
-      "audience": "archive",
-      "tags": [
-        "git",
-        "antigravity"
-      ],
-      "status": "active",
-      "score": 10.0,
-      "usage_count": 0,
-      "last_used_date": "N/A",
-      "source_type": "registry",
-      "path": "source/registry/cr20085361/antigravity-",
-      "registry_info": {
-        "original_url": "https://github.com/cr20085361/my_ai_skills",
-        "repository": "cr20085361/my_ai_skills",
-        "author": "cr20085361",
-        "ingestion_date": "2026-05-20",
-        "commit_hash": "42bef8a80f621cb638642eaa7b9b3bf715e6b69e"
-      }
     }
   }
 }

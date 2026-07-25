@@ -46,7 +46,7 @@ class TestPGRMSSystem(unittest.TestCase):
             with open(self.metadata_file, "w", encoding="utf-8") as f:
                 f.write(self.metadata_backup)
 
-        override_file = os.path.join(self.root_dir, "source", "registry", "cr20085361", "antigravity-", "override.md")
+        override_file = os.path.join(self.root_dir, "source", "custom", "productivity", "docx", "override.md")
         if os.path.exists(override_file):
             try:
                 os.remove(override_file)
@@ -83,14 +83,14 @@ class TestPGRMSSystem(unittest.TestCase):
     def test_2_override_merge(self):
         """测试双层 override.md 追加合并功能"""
         print("\n=== 测试 2：Override.md 追加合并 ===")
-        rule_dir = os.path.join(self.root_dir, "source", "registry", "cr20085361", "antigravity-")
+        rule_dir = os.path.join(self.root_dir, "source", "custom", "productivity", "docx")
         self.assertTrue(os.path.exists(rule_dir))
 
         override_file = os.path.join(rule_dir, "override.md")
         with open(override_file, "w", encoding="utf-8") as f:
             f.write("### 测试特调指令\n个人特调参数 X = True。")
 
-        body = get_rule_body_content("source/registry/cr20085361/antigravity-")
+        body = get_rule_body_content("source/custom/productivity/docx")
 
         self.assertIn("个人专属修正 (User Personal Override)", body)
         self.assertIn("测试特调指令", body)
@@ -123,8 +123,8 @@ class TestPGRMSSystem(unittest.TestCase):
         self.assertIn("chinese-output-constraint", content)
         # frontend-design 的 tags 是 ["react","vue","css","javascript","tailwind"]，与 ["matlab"] 无交集，应被过滤
         self.assertNotIn("frontend-design", content, "frontend-design 应被过滤但未被过滤！")
-        # slack-gif-creator 与 matlab 无标签交集，且空 tags 不再全局放行
-        self.assertNotIn("slack-gif-creator", content)
+        # algorithmic-art 与 matlab 无标签交集，应被过滤
+        self.assertNotIn("algorithmic-art", content)
 
         print("=== 测试 3 通过 ===")
 
@@ -290,7 +290,7 @@ class TestPGRMSSystem(unittest.TestCase):
             data = json.load(f)
 
         self.assertEqual(data["rules"]["chinese-output-constraint"]["audience"], "codex-core")
-        self.assertEqual(data["rules"]["internal-comms"]["audience"], "archive")
+        self.assertEqual(data["rules"]["docx"]["audience"], "archive")
 
     def test_13_codex_compile_skips_archive_rules(self):
         """codex 编译默认只保留 codex-core 和 codex-project。"""
@@ -309,7 +309,7 @@ class TestPGRMSSystem(unittest.TestCase):
         codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
         self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "frontend-design", "SKILL.md")))
         self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "ui-ux-pro-max")))
-        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "internal-comms")))
+        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "docx")))
 
 
     def test_14_doc_coauthoring_not_injected_without_docs_tags(self):
