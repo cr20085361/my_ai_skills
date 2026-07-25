@@ -201,6 +201,25 @@
       "source_type": "custom",
       "path": "source/custom/engineering/cst-parametric-modeling"
     },
+    "installer-version-naming": {
+      "name": "installer-version-naming",
+      "title": "离线安装包版本命名规范",
+      "description": "设计本地离线安装包时，强制程序显示名称包含版本号，并确保程序名称与软件内部版本信息一致。当用户提到\"打包安装包\"\"制作安装程序\"\"离线部署包\"\"Inno Setup\"\"NSIS\"\"安装包设计\"\"程序快捷方式\"时激活。",
+      "category": "engineering",
+      "audience": "codex-project",
+      "tags": [
+        "installer",
+        "packaging",
+        "versioning",
+        "windows"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/installer-version-naming"
+    },
     "matlab": {
       "name": "matlab",
       "title": "matlab",
