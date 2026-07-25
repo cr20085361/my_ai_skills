@@ -256,6 +256,27 @@
       "source_type": "custom",
       "path": "source/custom/engineering/mcp-builder"
     },
+    "pyinstaller-external-script-bundling": {
+      "name": "pyinstaller-external-script-bundling",
+      "title": "PyInstaller 打包外部解释器脚本的必备模式",
+      "description": "当 PyInstaller 应用需要在运行时通过 subprocess 调用外部解释器（CST Python、MATLAB、自定义 Python 等）执行 .py 脚本时，必须使用 --add-data 打包脚本并用 sys._MEIPASS 解析路径。当用户提到\"PyInstaller 打包\"\"CST 联动\"\"外部脚本调用\"\"subprocess 调用 worker\"\"打包后脚本找不到\"\"_MEIPASS\"时激活。",
+      "category": "engineering",
+      "audience": "codex-project",
+      "tags": [
+        "pyinstaller",
+        "packaging",
+        "cst",
+        "subprocess",
+        "worker-script",
+        "meipass"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/pyinstaller-external-script-bundling"
+    },
     "webapp-testing": {
       "name": "webapp-testing",
       "title": "webapp-testing",

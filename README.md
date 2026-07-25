@@ -4,7 +4,7 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 
 这个仓库面向代码代理与本地自动化场景，重点做了几件事：
 
-- 统一维护 `source/` 下的 22 条原创规则（design 5 / engineering 9 / productivity 8）
+- 统一维护 `source/` 下的 23 条原创规则（design 5 / engineering 10 / productivity 8）
 - 通过 `metadata.json` 与 `dashboard.html` 提供可检索、可视化的规则索引
 - 支持面向不同 IDE/代理的多目标编译
 - 支持项目级绑定与按标签筛选注入
@@ -16,7 +16,7 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 graph TB
     subgraph SRC["source/ 规则源"]
         D["design/ (5)"]
-        E["engineering/ (9)"]
+        E["engineering/ (10)"]
         P["productivity/ (8)"]
     end
 
@@ -88,6 +88,7 @@ timeline
            : 命名规范修复与广告移除
     v1.5.0 : 新增安装包版本命名规范
            : 3 个外部技能同步至上游最新
+    v1.5.1 : 新增 PyInstaller 外部脚本打包模式
 ```
 
 ## 项目作用
@@ -216,6 +217,10 @@ score: 10.0
 - 原生 Bend、Transform、Boolean、WCS 与复杂几何操作编排
 
 ## 发布历史
+
+### v1.5.1 - 2026-07-26
+
+- 新增 `pyinstaller-external-script-bundling` 技能：PyInstaller 打包外部解释器脚本的必备模式（CST/MATLAB worker 路径解析、`--add-data`、`_MEIPASS` 双模式兼容）
 
 ### v1.5.0 - 2026-07-26
 
