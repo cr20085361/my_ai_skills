@@ -1,0 +1,23 @@
+{
+  "skill_name": "cst-parametric-modeling",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "给 CST 模型新增顶部和底部间隙参数，根据两者计算旋转角，并允许 Parameter Sweep。",
+      "expected_output": "建立用户参数、派生公式、有效边界和可重建 History，并列出耦合对象。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "这个参数化模型需要验证零角、标称、小值、大值和非法状态，最后恢复交付参数。",
+      "expected_output": "执行完整回归矩阵，以实际几何测量验收，保存关闭重开后复测标称状态。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "元素数量由公式变化，变换和验证不能写死最初的 12 个对象。",
+      "expected_output": "从当前 CST 参数动态生成对象集合，并在每次重建后检查预期对象。",
+      "files": []
+    }
+  ]
+}

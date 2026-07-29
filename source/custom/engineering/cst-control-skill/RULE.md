@@ -1,7 +1,7 @@
 ---
 name: cst-control-skill
 title: CST Studio Suite Python Control
-description: Use when an AI agent needs to connect to, open, create, save, or inspect CST Studio Suite 2026/SP2 projects through Python, including CST installation discovery, cst.interface/cst.results imports, script execution, and automation failure diagnosis.
+description: Use when an AI agent needs to connect to, open, create, save, inspect, or safely deliver CST Studio Suite 2026/SP2 projects through Python or the CST GUI, including installation discovery, exact-project selection, cst.interface/cst.results imports, close/reopen persistence checks, Chinese text encoding, model fingerprints, script execution, and automation failure diagnosis.
 category: engineering
 audience: codex-project
 tags: [cst, python, electromagnetic, antenna, automation, parametric-modeling]
@@ -17,10 +17,9 @@ control channel repeatable so the agent can focus on geometry and RF intent.
 ## Baseline
 
 1. Work on Windows with CST Studio Suite 2026 SP2.
-2. Prefer the CST-bundled Python at:
-   `F:\EDA\CST Studio Suite 2026\Python\python.exe`
-   when available.
-3. Do not hard-code that path in reusable scripts. Discover the install folder
+2. Prefer the CST-bundled Python at `<install>/Python/python.exe` when
+   available.
+3. Do not hard-code a drive letter in reusable scripts. Discover the install folder
    from `CST_STUDIO_SUITE_2026`, `CST_INSTALL_DIR`, or the Windows uninstall
    registry key.
 4. Add `<install>/AMD64/python_cst_libraries` to `sys.path` before importing
@@ -54,7 +53,29 @@ prj.save(str(Path("test.cst").resolve()))
 
 Use `DesignEnvironment.connect_to_any_or_new()` when you are allowed to open or
 reuse CST. If several CST frontends are running and connection is ambiguous,
-start from a clean CST session or pass the project path explicitly.
+enumerate the running environments and select the one whose open project path
+exactly matches the requested `.cst`. Do not mutate the first PID merely because
+it appears first.
+
+## Persistence and delivery contract
+
+Treat in-memory success and on-disk persistence as separate checks:
+
+1. Resolve the exact target project path and confirm the active CST project
+   matches it before mutation.
+2. Record a backup/hash plus fingerprints for every protected domain.
+3. Apply the smallest requested change.
+4. Save, close, reopen, and read the changed state again. An in-memory API
+   readback is not delivery evidence.
+5. If `project.save()` returns without error but the file hash does not change
+   or the reopened value reverts, use CST's native Save command in the GUI,
+   wait for the modified marker to clear, then close and reopen once more.
+6. Compare protected fingerprints and report exactly what changed.
+
+For metadata-only work, protect parameter expressions and numeric values,
+History, geometry, ports, monitors, lumped elements, units, and solver setup.
+Read `references/persistence-encoding-and-fingerprints.md` before changing
+parameter descriptions, notes, labels, or other text stored inside a `.cst`.
 
 ## Complex-operation execution contract
 
@@ -96,6 +117,12 @@ path; do not guess silently.
   `connect_to_any_or_new()` or open the target project through the script.
 - Project opens but history is not visible: ensure commands are sent through
   `model3d.add_to_history(title, vba)`, then save.
+- Save appears successful but text reverts after reopening: use the native CST
+  Save command and repeat the close/reopen verification.
+- Chinese descriptions read back as mojibake through `cst.interface` while the
+  CST GUI displays them correctly: treat the GUI as the presentation check and
+  use the reversible GBK/Latin-1 normalization described in the persistence
+  reference only for comparison. Never write the mojibake back to the model.
 - CST hangs on startup: check license availability and whether an old modal
   dialog is waiting in CST.
 - Result export fails: confirm the solver has completed and the result path

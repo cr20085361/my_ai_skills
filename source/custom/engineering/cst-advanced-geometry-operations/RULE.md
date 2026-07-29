@@ -1,7 +1,7 @@
 ---
 name: cst-advanced-geometry-operations
 title: CST Advanced Geometry Operations
-description: Use when an AI agent must create, parameterize, validate, or debug complex CST Studio Suite geometry operations beyond primitives, including native cylindrical Bend, local coordinate systems, transforms, booleans, arrays, sweep/loft sequencing, sheet-versus-solid branches, and planar-to-curved state changes through Python-injected History VBA.
+description: Use when an AI agent must create, parameterize, validate, or debug complex CST Studio Suite geometry operations beyond primitives, including native cylindrical Bend, pivoted rigid-branch rotations, tapered gaps, local coordinate systems, transforms, booleans, arrays, sweep/loft sequencing, sheet-versus-solid branches, and planar-to-curved state changes through Python-injected History VBA.
 category: engineering
 audience: codex-project
 tags: [cst, geometry, history-list, python, vba, parametric-modeling]
@@ -24,7 +24,10 @@ objects, coordinate systems, operation order, or topology.
 3. Need Boolean, Transform, Mirror, Array, Sweep, Loft, Blend, or another
    native operation? Record that exact operation from the active CST version
    before automating it.
-4. Need only visual exchange geometry? Use imported mesh and state explicitly
+4. Need two conductor branches to open symmetrically around a feed-end pivot
+   while attached elements and a tail load remain connected? Read
+   `references/pivoted-rigid-branch-rotation.md`.
+5. Need only visual exchange geometry? Use imported mesh and state explicitly
    that it is not internally parameter-rebuildable.
 
 ## Mandatory operation ledger
@@ -72,6 +75,11 @@ For Boolean, Transform, Mirror, Array, Sweep, Loft, Blend, Fillet, and Chamfer:
 
 Do not use a command name found online as proof of valid CST VBA syntax. Object
 selection and sheet/solid behavior must be verified in the installed CST build.
+
+For paired rigid branches, treat the branch solids, attached radiators, gap
+body, feed contact, and tail termination as one coupled operation ledger. Use
+the formulas, operation order, zero-angle branch, and physical measurements in
+`references/pivoted-rigid-branch-rotation.md`.
 
 ## Failure isolation
 

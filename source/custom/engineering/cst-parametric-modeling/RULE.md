@@ -1,7 +1,7 @@
 ---
 name: cst-parametric-modeling
 title: CST Parametric Modeling
-description: Use when building or iterating CST models that must retain internal parameter optimization, including CST Parameter List variables, derived parameters, rebuildable History VBA geometry, Parameter Sweep, Optimizer, and Tuning workflows.
+description: Use when building or iterating CST models that must retain internal parameter optimization, including CST Parameter List variables, derived parameters, rebuildable and coupled History VBA geometry, validation bounds, zero-state regression, Parameter Sweep, Optimizer, and Tuning workflows.
 category: engineering
 audience: codex-project
 tags: [cst, parametric-modeling, parameter-sweep, optimizer, tuning, python, vba]
@@ -47,6 +47,55 @@ Keep the following priorities fixed:
 7. Add adaptive sampling and point-count limits for high-curvature or
    high-frequency boundaries.
 8. Produce a reusable `.cst` template.
+
+## Parameter contract and regression matrix
+
+Before editing geometry, make a small parameter contract:
+
+- user inputs, defaults, physical meaning, and units;
+- derived parameters and formulas;
+- coordinate convention and reference points;
+- valid inequalities and singular states;
+- geometry, feed, port, load, spacer, and mesh objects affected by each input.
+
+Validate expressions before geometry creation and raise a clear CST error for an
+invalid state. For inverse trigonometric formulas, explicitly bound the
+dimensionless argument. Keep derived geometry references in CST parameters so
+loads and spacers use the same source of truth as the transformed solids.
+
+Every parameterized change needs at least:
+
+1. a zero-change state that must reproduce the baseline;
+2. a nominal state;
+3. one smaller and one larger valid state;
+4. an invalid state that must fail with the intended message.
+
+For each valid state, run a full History rebuild and measure the physical
+outcome from geometry or endpoints rather than trusting the formula alone.
+Check dynamic object sets against the current parameter values; do not hard-code
+an initial element or strip count in transforms or validation scripts.
+
+After the last state, restore the requested delivery values, save, close,
+reopen, and repeat the nominal checks. Compare the protected parameter core,
+History, geometry, port, monitor, and load fingerprints described in
+`../cst-control-skill/references/persistence-encoding-and-fingerprints.md`.
+
+## Coupled structural transforms
+
+Treat a transform of a conductor branch as a coupled parameterization when it
+changes any physical contact or reference:
+
+- rotate the conductor and every electrically attached element as one rigid
+  branch;
+- rebuild gap fillers or vacuum bodies from the same top and bottom reference
+  parameters;
+- recompute lumped-load endpoints and any tail short;
+- keep the feed/port fixed only when its contact at the pivot is proven;
+- perform topology-changing shell, face-offset, fillet, or boolean work before
+  the transform when possible, because fixed face IDs are fragile afterward.
+
+Use `cst-advanced-geometry-operations` for the recorded native transform and
+its operation ledger.
 
 ## Geometry-state parameters
 

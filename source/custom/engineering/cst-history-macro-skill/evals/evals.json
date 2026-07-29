@@ -1,0 +1,23 @@
+{
+  "skill_name": "cst-history-macro-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "把我在 CST GUI 里录制的 Rotate History 参数化，并作为独立命名项写回工程。",
+      "expected_output": "保留录制语法、选择顺序和坐标系，每个逻辑操作独立写入 History 并重建验证。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "新增一组带中文物理含义说明的 CST 参数，后续要用于优化扫描。",
+      "expected_output": "使用带描述的参数创建方式，说明单位和物理作用，并保持 History 可重建。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "仅把已有参数描述改成中文，参数表达式和数值一个都不要改。",
+      "expected_output": "使用 SetParameterDescription 而非重建参数，并执行元数据隔离和关闭重开验收。",
+      "files": []
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 ---
 name: cst-history-macro-skill
 title: CST History List and VBA Modeling
-description: Use when an AI agent must create or modify CST Studio Suite 2026 geometry through History List/VBA snippets injected from Python, including CST parameters, materials, primitives, curves, lofts, boolean operations, transforms, imports, rebuilds, and History debugging.
+description: Use when an AI agent must create or modify CST Studio Suite 2026 geometry or parameter metadata through History List/VBA snippets and Python, including CST parameters and descriptions, materials, primitives, curves, lofts, boolean operations, transforms, imports, rebuilds, and History debugging.
 category: engineering
 audience: codex-project
 tags: [cst, history-list, vba, python, geometry, parametric-modeling]
@@ -51,6 +51,33 @@ Good descriptions state:
 
 Avoid putting one-off project notes in this skill. Keep project-specific
 parameter names and formulas in that project's own documentation.
+
+### Description-only edits
+
+When the user asks to translate or revise parameter descriptions while keeping
+everything else unchanged, do not use the parameter-creation pattern above.
+Use `SetParameterDescription` so the expression, numeric value, parameter order,
+and dependency graph are not rewritten:
+
+```python
+model.SetParameterDescription("patch_w", "贴片沿 X 方向的宽度（mm）")
+```
+
+Apply this as a metadata-only operation:
+
+1. Enumerate the current parameter names and fail if an expected name is
+   missing.
+2. Keep an explicit name-to-description mapping; do not translate parameter
+   names or expressions.
+3. Capture parameter-core, History, geometry, port, monitor, and load
+   fingerprints before editing.
+4. Save through CST, close, reopen, and verify every description.
+5. Compare protected fingerprints and confirm they are unchanged.
+
+Read
+`../cst-control-skill/references/persistence-encoding-and-fingerprints.md`
+for CST 2026 save persistence and Chinese readback behavior. Do not round-trip
+mojibake returned by `cst.interface` back into the project.
 
 ## Advanced native operations
 

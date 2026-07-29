@@ -119,7 +119,7 @@
     "cst-advanced-geometry-operations": {
       "name": "cst-advanced-geometry-operations",
       "title": "CST Advanced Geometry Operations",
-      "description": "Use when an AI agent must create, parameterize, validate, or debug complex CST Studio Suite geometry operations beyond primitives, including native cylindrical Bend, local coordinate systems, transforms, booleans, arrays, sweep/loft sequencing, sheet-versus-solid branches, and planar-to-curved state changes through Python-injected History VBA.",
+      "description": "Use when an AI agent must create, parameterize, validate, or debug complex CST Studio Suite geometry operations beyond primitives, including native cylindrical Bend, pivoted rigid-branch rotations, tapered gaps, local coordinate systems, transforms, booleans, arrays, sweep/loft sequencing, sheet-versus-solid branches, and planar-to-curved state changes through Python-injected History VBA.",
       "category": "engineering",
       "audience": "codex-project",
       "tags": [
@@ -140,7 +140,7 @@
     "cst-control-skill": {
       "name": "cst-control-skill",
       "title": "CST Studio Suite Python Control",
-      "description": "Use when an AI agent needs to connect to, open, create, save, or inspect CST Studio Suite 2026/SP2 projects through Python, including CST installation discovery, cst.interface/cst.results imports, script execution, and automation failure diagnosis.",
+      "description": "Use when an AI agent needs to connect to, open, create, save, inspect, or safely deliver CST Studio Suite 2026/SP2 projects through Python or the CST GUI, including installation discovery, exact-project selection, cst.interface/cst.results imports, close/reopen persistence checks, Chinese text encoding, model fingerprints, script execution, and automation failure diagnosis.",
       "category": "engineering",
       "audience": "codex-project",
       "tags": [
@@ -161,7 +161,7 @@
     "cst-history-macro-skill": {
       "name": "cst-history-macro-skill",
       "title": "CST History List and VBA Modeling",
-      "description": "Use when an AI agent must create or modify CST Studio Suite 2026 geometry through History List/VBA snippets injected from Python, including CST parameters, materials, primitives, curves, lofts, boolean operations, transforms, imports, rebuilds, and History debugging.",
+      "description": "Use when an AI agent must create or modify CST Studio Suite 2026 geometry or parameter metadata through History List/VBA snippets and Python, including CST parameters and descriptions, materials, primitives, curves, lofts, boolean operations, transforms, imports, rebuilds, and History debugging.",
       "category": "engineering",
       "audience": "codex-project",
       "tags": [
@@ -182,7 +182,7 @@
     "cst-parametric-modeling": {
       "name": "cst-parametric-modeling",
       "title": "CST Parametric Modeling",
-      "description": "Use when building or iterating CST models that must retain internal parameter optimization, including CST Parameter List variables, derived parameters, rebuildable History VBA geometry, Parameter Sweep, Optimizer, and Tuning workflows.",
+      "description": "Use when building or iterating CST models that must retain internal parameter optimization, including CST Parameter List variables, derived parameters, rebuildable and coupled History VBA geometry, validation bounds, zero-state regression, Parameter Sweep, Optimizer, and Tuning workflows.",
       "category": "engineering",
       "audience": "codex-project",
       "tags": [
