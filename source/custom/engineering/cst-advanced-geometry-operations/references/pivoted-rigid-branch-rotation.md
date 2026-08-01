@@ -136,7 +136,9 @@ Test at least:
 
 For every valid state:
 
-- run a full History rebuild;
+- run a regular parameter `Rebuild()` and check its return, Messages, and model
+  tree; reserve a full History rebuild for an optional isolated diagnostic after
+  regular rebuilds are stable;
 - measure top and bottom clear gaps from actual vertices or load endpoints;
 - compare the measured half-angle with the formula;
 - check all expected branch objects exist and remain conductive;

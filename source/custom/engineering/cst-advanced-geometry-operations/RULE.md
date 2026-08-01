@@ -27,7 +27,9 @@ objects, coordinate systems, operation order, or topology.
 4. Need two conductor branches to open symmetrically around a feed-end pivot
    while attached elements and a tail load remain connected? Read
    `references/pivoted-rigid-branch-rotation.md`.
-5. Need only visual exchange geometry? Use imported mesh and state explicitly
+5. Need a curved ribbon, pinwall, rib, or shaped strip formed from analytical
+   cross-sections? Read `references/lofted-ribbons-and-contacts.md`.
+6. Need only visual exchange geometry? Use imported mesh and state explicitly
    that it is not internally parameter-rebuildable.
 
 ## Mandatory operation ledger
@@ -38,6 +40,7 @@ Before writing VBA, define:
 - active coordinate system, operation axis, reference point, and sign
   convention;
 - user parameters, derived parameters, bounds, and invalid states;
+- dimension evidence grade and every geometry assumption;
 - output object names and whether inputs are consumed by the operation;
 - three rebuild checks: nominal, boundary, and a changed-parameter state.
 
@@ -91,6 +94,9 @@ the formulas, operation order, zero-angle branch, and physical measurements in
   normal, and restored global WCS.
 - If a sheet operation fails on solids or vice versa, keep separate generation
   branches; never sweep metal thickness through zero in one model state.
+- If a loft terminates at zero width or coincident points, replace the terminal
+  section with a small physical/contact section whose tolerance is a named
+  parameter; validate that it does not create an unintended short.
 - Keep ports, boundaries, mesh, monitors, and solver setup outside geometry
   History until the geometry states rebuild successfully.
 

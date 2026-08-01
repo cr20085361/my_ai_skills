@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "target_design": "paper title or stable design identifier",
+  "sources": [
+    {
+      "id": "paper",
+      "title": "target paper",
+      "kind": "paper",
+      "location": "local path, DOI, or direct URL",
+      "sha256": "optional for local files"
+    }
+  ],
+  "records": [
+    {
+      "id": "dimension.example",
+      "feature": "physical feature or CST parameter",
+      "value": 1.0,
+      "unit": "mm",
+      "grade": "paper_exact",
+      "source_id": "paper",
+      "locator": "page/figure/table/equation",
+      "support": "short paraphrase",
+      "interpretation": "clear aperture, centerline, outer dimension, or other meaning",
+      "affects": ["component:object"],
+      "uncertainty": null
+    }
+  ]
+}

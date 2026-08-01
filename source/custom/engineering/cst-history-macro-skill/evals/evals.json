@@ -10,13 +10,19 @@
     {
       "id": 2,
       "prompt": "新增一组带中文物理含义说明的 CST 参数，后续要用于优化扫描。",
-      "expected_output": "使用带描述的参数创建方式，说明单位和物理作用，并保持 History 可重建。",
+      "expected_output": "若参数初始化位于可重放 History，使用 MakeSureParameterExists 与 SetParameterDescription，说明单位和物理作用，并验证重建不会覆盖已扫参的值。",
       "files": []
     },
     {
       "id": 3,
       "prompt": "仅把已有参数描述改成中文，参数表达式和数值一个都不要改。",
       "expected_output": "使用 SetParameterDescription 而非重建参数，并执行元数据隔离和关闭重开验收。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "在 CST History 中按当前数量参数动态生成一组弯曲金属条，数量和曲率都要能扫参。",
+      "expected_output": "在 History 中验证整数范围并循环生成确定性名称，采用非退化闭合截面与 LoftCurves，使用接触容差，并在数量变化后检查模型树。",
       "files": []
     }
   ]

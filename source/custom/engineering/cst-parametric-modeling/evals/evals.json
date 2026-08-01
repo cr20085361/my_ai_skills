@@ -10,13 +10,19 @@
     {
       "id": 2,
       "prompt": "这个参数化模型需要验证零角、标称、小值、大值和非法状态，最后恢复交付参数。",
-      "expected_output": "执行完整回归矩阵，以实际几何测量验收，保存关闭重开后复测标称状态。",
+      "expected_output": "有效状态优先执行常规 Rebuild 并以实际几何验收；非法值先由 Python 合同拒绝，模态 CST 错误仅在显式隔离诊断中触发，最后恢复并关闭重开复测标称状态。",
       "files": []
     },
     {
       "id": 3,
       "prompt": "元素数量由公式变化，变换和验证不能写死最初的 12 个对象。",
       "expected_output": "从当前 CST 参数动态生成对象集合，并在每次重建后检查预期对象。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "复杂 loft 模型 full_history_rebuild 会断开 CST，但普通 Rebuild 能完成。参数回归应该怎么做？",
+      "expected_output": "把常规 Rebuild 作为有效状态回归默认路径，联合返回值、Messages、模型树和几何指纹验收；full History rebuild 仅作为可选隔离诊断。",
       "files": []
     }
   ]

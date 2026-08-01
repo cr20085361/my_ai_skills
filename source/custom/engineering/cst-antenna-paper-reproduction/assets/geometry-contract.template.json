@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "coordinate_system": {
+    "origin": "physical reference point",
+    "x_axis": "direction and plane meaning",
+    "y_axis": "direction and plane meaning",
+    "z_axis": "direction and propagation meaning"
+  },
+  "dimension_reference": "electromagnetic clearance, centerline, or manufacturing outer size",
+  "frequency_band_ghz": [1.0, 2.0],
+  "components": [
+    {
+      "name": "stable_component_name",
+      "material": "PEC",
+      "topology": "solid, sheet, repeated solid, or void",
+      "contacts": [],
+      "open_interfaces": [],
+      "evidence_record_ids": ["dimension.example"]
+    }
+  ],
+  "modeling_scope": {
+    "geometry": true,
+    "feed": false,
+    "ports": false,
+    "boundaries": false,
+    "mesh": false,
+    "monitors": false,
+    "solver_run": false
+  },
+  "unresolved_high_impact_items": []
+}

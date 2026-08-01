@@ -57,6 +57,26 @@ enumerate the running environments and select the one whose open project path
 exactly matches the requested `.cst`. Do not mutate the first PID merely because
 it appears first.
 
+### Reliable CST 2026 launch
+
+For a new Microwave Studio frontend, prefer an explicit studio type:
+
+```python
+de = cst.interface.DesignEnvironment.new(options=["--m"])
+```
+
+Do not assume `--hide` registers a usable automation frontend on every CST
+2026/SP2 installation. The first launch can take substantially longer than a
+normal Python API call while CST acquires a license and registers the design
+environment. Use a bounded startup timeout with progress reporting, then check
+license availability, existing CST processes, and modal dialogs before retrying.
+
+After connecting, inspect the actual `project.model3d` methods required by the
+task (for example `Polygon3D`, `LoftCurves`, `Rebuild`, or
+`full_history_rebuild`). CST installations and project types can expose
+different automation surfaces; capability detection is stronger evidence than
+an online example or an assumed wrapper method.
+
 ## Persistence and delivery contract
 
 Treat in-memory success and on-disk persistence as separate checks:
@@ -94,6 +114,26 @@ automation transport deliberately simple:
 This separates Python connection failures from CST geometry failures and keeps
 complex modeling reproducible.
 
+For a generated project, use deterministic, versioned output names and refuse
+to overwrite a validated `.cst` by default. CST may create a sibling expanded
+project directory and `Model.lok` while the file is open; treat these as runtime
+cache, not delivery source. Save each successful named History block so a later
+failure can be isolated to one stage.
+
+## Automation failure channels
+
+Do not treat "no Python exception" as success. Check all four channels:
+
+1. API return values such as `Rebuild() is False`;
+2. new entries from `project.get_messages()`;
+3. expected model-tree or geometry changes;
+4. frontend state, including a blocking modal dialog or a closed connection.
+
+A History `Err.Raise` may produce `False` plus a visible modal instead of a
+Python exception. Exercise such invalid states only in a disposable project and
+behind an explicit diagnostic option. Validate the same contract in Python so
+normal automated regressions do not deliberately block on expected UI errors.
+
 ## Result Reading
 
 Use `cst.results.ProjectFile` after a solver run when result data exists:
@@ -124,6 +164,12 @@ path; do not guess silently.
   use the reversible GBK/Latin-1 normalization described in the persistence
   reference only for comparison. Never write the mojibake back to the model.
 - CST hangs on startup: check license availability and whether an old modal
-  dialog is waiting in CST.
+  dialog is waiting in CST; when a hidden launch cannot register, retry a clean
+  explicit Microwave Studio launch with `options=["--m"]`.
+- A rebuild did not raise but the model is invalid: inspect the Boolean return,
+  new CST messages, expected tree objects, and modal state.
+- The automation connection closes during a dense rebuild: preserve the last
+  saved stage, reopen a disposable copy, and prefer a regular `Rebuild()` for
+  parameter regression before considering a full History rebuild.
 - Result export fails: confirm the solver has completed and the result path
   exists.

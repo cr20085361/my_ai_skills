@@ -34,7 +34,8 @@ Keep the following priorities fixed:
 - External driver: `Python`
 - CST interface: `cst.interface`
 - Internal rebuild: `History VBA`
-- Surface construction: `Polygon3D + CoverCurve`
+- Surface construction: `Polygon3D + LoftCurves` for solids or `CoverCurve`
+  for verified sheet workflows
 
 ## Workflow
 
@@ -70,10 +71,24 @@ Every parameterized change needs at least:
 3. one smaller and one larger valid state;
 4. an invalid state that must fail with the intended message.
 
-For each valid state, run a full History rebuild and measure the physical
-outcome from geometry or endpoints rather than trusting the formula alone.
+For each valid state, run the normal `model3d.Rebuild()` first and measure the
+physical outcome from geometry or endpoints rather than trusting the formula
+alone. Check its Boolean return, new CST messages, expected model-tree objects,
+and connection state. A History error may return `False` or display a blocking
+modal instead of raising a Python exception.
+
+Use a full History rebuild only as an additional isolated diagnostic after
+regular rebuilds are stable, on a disposable copy, and when the model size and
+CST behavior make it safe. Dense loft models can close the automation
+connection during a full rebuild even though regular parameter rebuilds work.
 Check dynamic object sets against the current parameter values; do not hard-code
 an initial element or strip count in transforms or validation scripts.
+
+Validate invalid states in the external Python parameter contract by default
+and keep matching `Err.Raise` guards in CST History. Exercise an invalid CST
+state only with an explicit diagnostic option because the expected error may
+open a modal dialog. Treat exception, `False`, relevant Messages, missing
+expected geometry, or a closed connection as rejection evidence.
 
 After the last state, restore the requested delivery values, save, close,
 reopen, and repeat the nominal checks. Compare the protected parameter core,
@@ -126,6 +141,9 @@ For complex operation sequencing and verified Bend details, use
 - Do not make one closed profile responsible for every face of a complex metal
   surface.
 - Do not commit CST's automatically expanded project directory as source code.
+- Do not use a successful formula evaluation as the only regression result;
+  compare deterministic names, counts, key coordinates, envelopes, contacts,
+  and clearances against an analytical fingerprint.
 
 ## Deliverables
 
@@ -135,3 +153,4 @@ At minimum, produce:
 - An `example_spiral_config.json` or equivalent parameter sample.
 - Documentation describing the control flow and pitfalls.
 - A reusable harness or checklist.
+- A machine-readable parameter contract and analytical geometry fingerprint.

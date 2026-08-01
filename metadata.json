@@ -137,6 +137,27 @@
       "source_type": "custom",
       "path": "source/custom/engineering/cst-advanced-geometry-operations"
     },
+    "cst-antenna-paper-reproduction": {
+      "name": "cst-antenna-paper-reproduction",
+      "title": "CST Antenna Paper Reproduction",
+      "description": "Use when reproducing an antenna from one or more papers, PDFs, theses, patents, drawings, or datasheets as a traceable and internally parameterized CST Studio Suite model. Trigger for requests such as 论文天线复现、根据论文建立 CST 参数化模型、从 PDF 提取天线尺寸后建模、literature-to-CST antenna reconstruction, including supplementary web research, evidence grading, missing-dimension decisions, geometry contracts, rebuild regressions, and delivery validation. Do not use for a simple paper summary or a small edit to an already-defined CST model.",
+      "category": "engineering",
+      "audience": "codex-project",
+      "tags": [
+        "cst",
+        "antenna",
+        "paper-reproduction",
+        "evidence",
+        "parametric-modeling",
+        "validation"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/cst-antenna-paper-reproduction"
+    },
     "cst-control-skill": {
       "name": "cst-control-skill",
       "title": "CST Studio Suite Python Control",

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "parameters": [
+    {
+      "name": "example_length",
+      "default": 1.0,
+      "unit": "mm",
+      "description": "physical meaning and effect",
+      "evidence_record_ids": ["dimension.example"],
+      "constraints": ["example_length > 0"],
+      "affects": ["component:object"]
+    },
+    {
+      "name": "example_count",
+      "default": 3,
+      "unit": "1",
+      "description": "dynamic repeated-element count",
+      "evidence_record_ids": ["dimension.example"],
+      "constraints": ["example_count is integer", "1 <= example_count <= 32"],
+      "affects": ["component:element_*" ]
+    }
+  ],
+  "derived": [
+    {
+      "name": "example_half",
+      "expression": "example_length/2",
+      "unit": "mm",
+      "role": "geometry"
+    }
+  ],
+  "dynamic_topology": [
+    {
+      "count_parameter": "example_count",
+      "name_pattern": "element_{index:02d}",
+      "minimum": 1,
+      "maximum": 32
+    }
+  ],
+  "regression_states": [
+    {"label": "baseline", "values": {"example_length": 1.0, "example_count": 3}},
+    {"label": "nominal", "values": {"example_length": 1.0, "example_count": 3}},
+    {"label": "smaller", "values": {"example_length": 0.8, "example_count": 3}},
+    {"label": "larger", "values": {"example_length": 1.2, "example_count": 3}},
+    {"label": "topology_change", "values": {"example_length": 1.0, "example_count": 4}}
+  ],
+  "invalid_states": [
+    {"label": "nonpositive_length", "values": {"example_length": 0.0}, "expected_error": "example_length > 0"}
+  ]
+}

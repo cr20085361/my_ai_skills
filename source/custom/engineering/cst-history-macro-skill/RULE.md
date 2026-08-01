@@ -35,13 +35,21 @@ For recorded snippets saved as files, use:
 
 ## Parameter Descriptions
 
-For optimization-ready CST models, prefer `StoreParameterWithDescription`.
-Descriptions should be Chinese, concise, and useful in the CST parameter table:
+Separate one-time parameter creation from replayable History initialization.
+When a parameter bootstrap is stored in History, use
+`MakeSureParameterExists` followed by `SetParameterDescription`:
 
 ```vb
-StoreParameterWithDescription "sub_h", "1.6", "介质基板厚度，增大时馈线与贴片离地高度增加。"
-StoreParameterWithDescription "patch_w", "30", "贴片沿 X 方向的宽度，主要影响谐振频率和输入阻抗。"
+MakeSureParameterExists "sub_h", "1.6"
+SetParameterDescription "sub_h", "介质基板厚度，增大时馈线与贴片离地高度增加。"
+MakeSureParameterExists "patch_w", "30"
+SetParameterDescription "patch_w", "贴片沿 X 方向的宽度，主要影响谐振频率和输入阻抗。"
 ```
+
+This preserves a value changed by Parameter Sweep, Tuning, or Python when the
+History is replayed. `StoreParameterWithDescription` remains suitable for a
+one-time external creation step that is not itself replayed; do not place it in
+a rebuildable bootstrap block when it can overwrite the current value.
 
 Good descriptions state:
 
@@ -104,7 +112,8 @@ active WCS, and body-vs-sheet behavior are operation-specific.
 ## Reliable Primitive Pattern
 
 ```vb
-StoreParameterWithDescription "body_x", "10", "实体沿 X 方向的尺寸。"
+MakeSureParameterExists "body_x", "10"
+SetParameterDescription "body_x", "实体沿 X 方向的尺寸。"
 
 With Brick
     .Reset
@@ -138,8 +147,10 @@ or analytical surfaces, a robust general pattern is:
 Generic shape:
 
 ```vb
-StoreParameterWithDescription "profile_w", "40", "轮廓宽度，增大时实体横向尺寸变大。"
-StoreParameterWithDescription "profile_h", "10", "轮廓高度，增大时顶面或外形高度增加。"
+MakeSureParameterExists "profile_w", "40"
+SetParameterDescription "profile_w", "轮廓宽度，增大时实体横向尺寸变大。"
+MakeSureParameterExists "profile_h", "10"
+SetParameterDescription "profile_h", "轮廓高度，增大时顶面或外形高度增加。"
 
 Curve.NewCurve "profile_curve_00"
 With Polygon3D
@@ -176,6 +187,28 @@ Practical rules verified in CST 2026 SP2:
 - Avoid degenerate profiles, such as zero width or coincident control points.
 - Avoid complex nested functions inside `Polygon3D.Point`; precompute constants
   in Python and keep CST expressions simple.
+
+For a curved conductive ribbon or wall rib, generate an odd number of closed
+rectangular profiles along the current parameterized centerline, then loft them
+as one solid. Keep every profile nondegenerate, extend terminal profiles by a
+small named contact tolerance when reliable electrical contact is required,
+and validate self-intersection and neighbor clearance at changed parameter
+states. Read
+`../cst-advanced-geometry-operations/references/lofted-ribbons-and-contacts.md`
+for the complete pattern.
+
+## Dynamic topology and deterministic names
+
+Read count parameters with `Evaluate`, validate their integer bounds before
+geometry creation, and generate curves and solids inside History loops. Derive
+names from the current index, for example `pin_L_01` or `cell_003`, so the model
+tree and regression harness agree after the count changes. Do not build a fixed
+initial object list in Python and expect it to remain valid after a rebuild.
+
+Split parameter setup, validation, major geometry subsystems, and mirrored or
+repeated sets into separate named History items. Save after every successful
+item; when a failure occurs, test the last saved project plus one item rather
+than replaying an opaque monolithic block.
 
 ## Imported Mesh Fallback
 
@@ -220,6 +253,9 @@ For OBJ, use `With OBJ ... .Read`; do not use guessed forms such as
 - Check quotation marks: CST VBA expects strings like `"PEC"`; Python raw
   strings help avoid accidental escaping.
 - If parameter changes do not affect geometry, run `Rebuild`.
+- If a rebuild reports no Python exception, still check its return value, new
+  CST messages, expected model-tree names, and whether a modal History Error is
+  blocking the frontend.
 - If an object name already exists, delete it intentionally first or use a new
   name; do not rely on silent overwrite.
 - For repeated test runs, start from a fresh `.cst` or record a cleanup History

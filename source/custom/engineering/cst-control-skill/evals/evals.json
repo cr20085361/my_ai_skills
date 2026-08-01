@@ -18,6 +18,12 @@
       "prompt": "读取这个 CST 已完成计算的 S11 结果并导出数据，不修改模型。",
       "expected_output": "使用 CST 结果接口和实际结果树路径，只读导出并避免触发几何建模流程。",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "CST 2026 用 --hide 启动后一直连不上，而且参数重建报错时 Python 没抛异常。请诊断自动化链路。",
+      "expected_output": "改用显式 Microwave Studio 启动并检查许可证、进程和模态窗口；同时检查 API 返回值、Messages、模型树和连接状态，而不是只等待 Python 异常。",
+      "files": []
     }
   ]
 }
