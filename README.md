@@ -4,7 +4,7 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 
 这个仓库面向代码代理与本地自动化场景，重点做了几件事：
 
-- 统一维护 `source/` 下的 23 条原创规则（design 5 / engineering 10 / productivity 8）
+- 统一维护 `source/` 下的 24 条原创规则（design 5 / engineering 11 / productivity 8）
 - 通过 `metadata.json` 与 `dashboard.html` 提供可检索、可视化的规则索引
 - 支持面向不同 IDE/代理的多目标编译
 - 支持项目级绑定与按标签筛选注入
@@ -16,7 +16,7 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 graph TB
     subgraph SRC["source/ 规则源"]
         D["design/ (5)"]
-        E["engineering/ (10)"]
+        E["engineering/ (11)"]
         P["productivity/ (8)"]
     end
 
@@ -91,6 +91,8 @@ timeline
     v1.5.1 : 新增 PyInstaller 外部脚本打包模式
     v1.6.0 : CST 四技能实战增强
            : 持久化验收、参数契约与双支路旋转
+    v1.7.0 : CST 论文复现与五技能增强
+           : 证据台账、合同校验与分段回归
 ```
 
 ## 项目作用
@@ -99,7 +101,7 @@ timeline
 - 编译生成适用于 Cursor、Windsurf、Cline、Antigravity/Gemini 与 Codex 的目标产物
 - 通过 `.pgrms.json` 绑定项目技术栈，仅向目标项目注入匹配标签的规则
 - 生成仓库看板 `dashboard.html`
-- 内置面向 CST 的工程技能，覆盖 Python 控制、History VBA 建模、参数化建模与复杂几何原生操作
+- 内置面向 CST 的工程技能，覆盖论文证据到模型交付、Python 控制、History VBA 建模、参数化建模与复杂几何原生操作
 
 ## 推荐的 Codex 工作流
 
@@ -206,33 +208,46 @@ score: 10.0
 
 当前主分支已纳入以下 CST 工程技能：
 
+- `cst-antenna-paper-reproduction`
 - `cst-control-skill`
 - `cst-history-macro-skill`
 - `cst-parametric-modeling`
 - `cst-advanced-geometry-operations`
 
-它们分别覆盖：
+五个技能分别覆盖：
 
+- 从论文、专利、图纸或数据表建立四级证据台账，生成几何/参数合同，并交付可追溯的 CST 参数化复现模型
 - CST Studio Suite 的精确工程连接、Python 控制、结果读取和关闭重开持久化验收
-- History List / VBA 记录式建模，以及参数创建与描述元数据修改的隔离处理
-- 带参数契约、有效边界、动态对象集合和多状态回归的 CST 参数化建模
-- 原生 Bend、Transform、Boolean、WCS、双支路枢轴旋转和渐变间隙体编排
+- History List / VBA 记录式建模、可重放参数初始化、动态拓扑与确定性命名
+- 带参数契约、有效边界、普通 `Rebuild()` 优先策略、动态对象集合和多状态回归的 CST 参数化建模
+- 原生 Bend、Transform、Boolean、WCS、双支路枢轴旋转、渐变间隙体与 loft ribbon 编排
 
 统一的 CST 操作闭环如下：
 
 ```mermaid
 flowchart LR
-    C1["精确连接目标工程"] --> C2["建立副本和保护指纹"]
+    C0["提取论文证据与尺寸等级"] --> C1["建立几何和参数合同"]
+    C1 --> C2["精确连接目标工程并建立副本"]
     C2 --> C3["录制不确定的原生 History"]
-    C3 --> C4["执行最小范围修改"]
-    C4 --> C5["多参数状态重建"]
-    C5 --> C6["测量实际几何与端点"]
+    C3 --> C4["分段构建并逐段保存"]
+    C4 --> C5["多参数状态普通重建"]
+    C5 --> C6["核验几何、接触和间隙"]
     C6 --> C7["使用 CST 原生保存"]
     C7 --> C8["关闭并重开工程"]
-    C8 --> C9["执行指纹回归"]
+    C8 --> C9["执行合同与指纹回归"]
 ```
 
 ## 发布历史
+
+### v1.7.0 - 2026-08-01
+
+- 新增 `cst-antenna-paper-reproduction`：把论文、PDF、专利、图纸或数据表转换为可追溯、内部参数化的 CST 复现模型，采用四级证据台账、缺失数据决策门、几何/参数合同和分段构建回归
+- 新增证据台账、几何合同、参数合同、验收报告模板及可执行合同校验脚本，明确已知、推导、假设和未实现边界
+- 增强 `cst-control-skill`：加入 `--m` 显式启动、CST API 能力探测、API/Messages/模型树/前端四通道错误识别，以及缓存与分段持久化规则
+- 增强 `cst-history-macro-skill`：修正可重放参数初始化方式，加入动态拓扑、确定性命名、分段 History 和 loft ribbon 构建规则
+- 增强 `cst-parametric-modeling`：以普通 `Rebuild()` 作为默认回归，full History rebuild 降为隔离诊断，并将非法状态弹窗测试改为显式可选
+- 增强 `cst-advanced-geometry-operations`：加入 loft ribbon、非退化端面、接触容差与尺寸证据等级规则，并补充专项参考
+- 5 个 CST skill 结构校验、19 个评测场景格式与唯一性检查、合同模板正向测试均通过
 
 ### v1.6.0 - 2026-07-29
 
