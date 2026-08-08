@@ -60,6 +60,37 @@ Good descriptions state:
 Avoid putting one-off project notes in this skill. Keep project-specific
 parameter names and formulas in that project's own documentation.
 
+## History/VBA parser preflight
+
+Treat CST History's VBA host as a parser that must be verified in the target
+CST release. A snippet accepted by a desktop VBA editor is not sufficient
+evidence that the History parser will accept it.
+
+Before attaching a new parameterized geometry block, run a small, separately
+named preflight History item containing only local declarations, assignments,
+and the intended validation branches. Use simple, purpose-specific local names
+such as `modelLength`, `feedWidthTop`, `gapAtTail`, and `interpolationT`.
+Avoid generic host-like identifiers such as `length`, which can be parsed as a
+member or reserved token rather than as a local scalar.
+
+Keep declarations and guards explicit:
+
+```vb
+Dim modelLength As Double, feedWidthTop As Double
+
+If modelLength <= 0 Then
+    Err.Raise 1004, "CST parameter preflight", "modelLength must be positive"
+End If
+```
+
+Use a complete `If ... Then` / `End If` block and confirm that the exact
+comparison syntax survives the CST History parser before generating solids.
+If CST reports an unknown scalar, a missing variable name, or a syntax error,
+reduce the preflight to the failing declaration or guard; do not continue by
+embedding the same unverified statement in a larger geometry macro. Keep the
+same bounds in the external Python contract so normal automated regression
+rejects invalid inputs without waiting on a modal `Err.Raise` dialog.
+
 ### Description-only edits
 
 When the user asks to translate or revise parameter descriptions while keeping

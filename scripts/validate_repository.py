@@ -9,6 +9,13 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
+import contextlib
+import io
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from families import FamilyValidationError, load_family_manifests
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOURCE_DIR = os.path.join(ROOT_DIR, "source")
@@ -55,6 +62,7 @@ def find_rule_files():
 
 def validate_rule_files(errors):
     expected_names = set()
+    seen_paths = {}
     for path in find_rule_files():
         rel = os.path.relpath(path, ROOT_DIR).replace("\\", "/")
         meta = parse_frontmatter(path)
@@ -72,6 +80,10 @@ def validate_rule_files(errors):
         elif normalized != meta.get("name"):
             errors.append(f"{rel}: name must be normalized as {normalized!r}")
         else:
+            if normalized in seen_paths:
+                errors.append(f"{rel}: duplicate rule name also used by {seen_paths[normalized]}")
+            else:
+                seen_paths[normalized] = rel
             expected_names.add(normalized)
 
         category = meta.get("category")
@@ -109,7 +121,7 @@ def validate_forbidden_dirs(errors):
             errors.append(f"forbidden tracked path: {tracked}")
 
 
-def validate_metadata(expected_names, errors):
+def validate_metadata(expected_names, families, errors):
     if not os.path.exists(METADATA_FILE):
         errors.append("metadata.json is missing")
         return
@@ -122,13 +134,89 @@ def validate_metadata(expected_names, errors):
         errors.append(f"metadata.json missing rules: {', '.join(missing)}")
     if stale:
         errors.append(f"metadata.json has stale rules: {', '.join(stale)}")
+    if data.get("schema_version") != 2:
+        errors.append("metadata.json schema_version must be 2")
+    metadata_families = data.get("families", {})
+    if set(metadata_families) != set(families):
+        errors.append("metadata.json family index is stale")
+    for family_id, family in families.items():
+        if metadata_families.get(family_id) != family:
+            errors.append(f"metadata.json family {family_id!r} is stale")
+        for member in family.get("members", []):
+            skill = member["skill"]
+            if data.get("rules", {}).get(skill, {}).get("family") != family_id:
+                errors.append(f"metadata.json rule {skill!r} has stale family projection")
+
+    try:
+        from pgrms import build_repository_metadata
+        with contextlib.redirect_stdout(io.StringIO()):
+            expected_metadata = build_repository_metadata(existing_metadata_file=METADATA_FILE)
+        if data != expected_metadata:
+            errors.append("metadata.json is not a fresh scan of source/")
+    except (FamilyValidationError, OSError, ValueError) as exc:
+        errors.append(f"unable to check metadata freshness: {exc}")
+
+
+def validate_family_evals(metadata, families, errors):
+    """要求每个受管成员和共享治理者都提供可执行示例。"""
+    rule_map = metadata.get("rules", {})
+    for family_id, family in families.items():
+        required = [member["skill"] for member in family.get("members", [])]
+        governance = family.get("governance", {})
+        if governance.get("shared_retrospective"):
+            required.append(governance["retrospective_skill"])
+        for skill in sorted(set(required)):
+            rule = rule_map.get(skill)
+            if not rule:
+                errors.append(f"family {family_id!r} eval target {skill!r} is missing from metadata")
+                continue
+            eval_path = os.path.join(ROOT_DIR, rule["path"], "evals", "evals.json")
+            if not os.path.isfile(eval_path):
+                errors.append(f"family {family_id!r} member {skill!r} is missing evals/evals.json")
+                continue
+            try:
+                with open(eval_path, "r", encoding="utf-8") as handle:
+                    eval_data = json.load(handle)
+            except (OSError, json.JSONDecodeError) as exc:
+                errors.append(f"family {family_id!r} member {skill!r} has unreadable evals: {exc}")
+                continue
+            if eval_data.get("skill_name") != skill or not isinstance(eval_data.get("evals"), list) or not eval_data["evals"]:
+                errors.append(f"family {family_id!r} member {skill!r} has invalid or empty evals")
+
+
+def validate_dashboard_freshness(errors):
+    dashboard_file = os.path.join(ROOT_DIR, "dashboard.html")
+    if not os.path.exists(dashboard_file):
+        errors.append("dashboard.html is missing")
+        return
+    try:
+        from dashboard import generate_html_dashboard
+        with tempfile.TemporaryDirectory(prefix="pgrms-dashboard-check-") as temp_dir:
+            expected_file = os.path.join(temp_dir, "dashboard.html")
+            with contextlib.redirect_stdout(io.StringIO()):
+                generate_html_dashboard(metadata_file=METADATA_FILE, output_file=expected_file)
+            with open(dashboard_file, "rb") as actual, open(expected_file, "rb") as expected:
+                if actual.read() != expected.read():
+                    errors.append("dashboard.html is stale; run pgrms.py scan")
+    except Exception as exc:
+        errors.append(f"unable to check dashboard freshness: {exc}")
 
 
 def main():
     errors = []
     expected_names = validate_rule_files(errors)
+    families, family_errors = load_family_manifests(
+        SOURCE_DIR,
+        rule_names=expected_names,
+        strict=False,
+    )
+    errors.extend(family_errors)
     validate_forbidden_dirs(errors)
-    validate_metadata(expected_names, errors)
+    validate_metadata(expected_names, families, errors)
+    if os.path.exists(METADATA_FILE):
+        with open(METADATA_FILE, "r", encoding="utf-8") as handle:
+            validate_family_evals(json.load(handle), families, errors)
+    validate_dashboard_freshness(errors)
 
     if errors:
         print("Repository validation failed:")
@@ -136,7 +224,7 @@ def main():
             print(f"- {error}")
         return 1
 
-    print(f"Repository validation passed: {len(expected_names)} rules")
+    print(f"Repository validation passed: {len(expected_names)} rules, {len(families)} families")
     return 0
 
 

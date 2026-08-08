@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "web-ui-delivery",
+  "title": "Web UI Delivery",
+  "description": "A Codex-ready workflow from design-system decisions through frontend implementation and browser acceptance checks.",
+  "members": [
+    {
+      "skill": "ui-ux-pro-max",
+      "kind": "core",
+      "role": "Design-system discovery, UX requirements, and pre-delivery UI quality checks",
+      "depends_on": []
+    },
+    {
+      "skill": "frontend-design",
+      "kind": "core",
+      "role": "Intentional, content-grounded frontend visual implementation",
+      "depends_on": [
+        "ui-ux-pro-max"
+      ]
+    },
+    {
+      "skill": "webapp-testing",
+      "kind": "extension",
+      "role": "Playwright browser acceptance, diagnostics, screenshots, and logs",
+      "depends_on": [
+        "frontend-design"
+      ]
+    }
+  ],
+  "ownership": {
+    "design-system": "ui-ux-pro-max",
+    "frontend-composition": "frontend-design",
+    "browser-acceptance": "webapp-testing",
+    "family-governance": "skill-family-governance"
+  },
+  "governance": {
+    "retrospective_skill": "skill-family-governance",
+    "shared_retrospective": true
+  }
+}

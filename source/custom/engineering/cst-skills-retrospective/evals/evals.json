@@ -1,0 +1,35 @@
+{
+  "skill_name": "cst-skills-retrospective",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "进行 CST 相关 skills 复盘，把这次 History 报错里真正可复用的经验沉淀下来。",
+      "expected_output": "触发 CST skills 复盘；先做证据和重复覆盖检查，给出候选补强点并在写入前等待确认。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "总结一下这次 CST 参数化踩坑，有价值的话补强现有技能并同步技能库。",
+      "expected_output": "语义触发复盘；没有合格候选时保持零修改，有候选时按 ownership 路由并先请求确认。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "帮我修改这个 CST 天线模型的馈线宽度，然后看一下 S11。",
+      "expected_output": "不触发 skills 复盘；使用具体 CST 建模或控制技能完成当前模型任务。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "汇总 CST 仿真的远场方向图和端口结果。",
+      "expected_output": "不触发 skills 复盘，因为用户只要求结果总结。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "做一次 CST skill 补强检查，但这次没有发现跨项目可复用的新经验。",
+      "expected_output": "明确报告本次无需补强，不修改源仓库、不编译、不部署。",
+      "files": []
+    }
+  ]
+}

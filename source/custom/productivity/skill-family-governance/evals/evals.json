@@ -1,0 +1,20 @@
+{
+  "skill_name": "skill-family-governance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "复盘 Web UI 交付族最近的验收问题，判断哪些经验应该写进成员 skill。",
+      "expected_output": "先检查证据、成员边界、所有权和既有覆盖；只提出可复用候选，并在写入前等待用户确认。"
+    },
+    {
+      "id": 2,
+      "prompt": "把三个都带 Python 标签的 skill 放到一个 family 里。",
+      "expected_output": "拒绝仅凭标签归族，要求证明稳定工作流、实际交接、所有权和可验证部署边界。"
+    },
+    {
+      "id": 3,
+      "prompt": "文档 family 中有 archive 成员，直接同步到 Codex。",
+      "expected_output": "指出 Codex 部署不能静默遗漏成员；先明确受众策略或调整 family 边界。"
+    }
+  ]
+}

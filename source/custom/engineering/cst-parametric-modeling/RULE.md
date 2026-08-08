@@ -64,6 +64,30 @@ invalid state. For inverse trigonometric formulas, explicitly bound the
 dimensionless argument. Keep derived geometry references in CST parameters so
 loads and spacers use the same source of truth as the transformed solids.
 
+### Physical-endpoint coordinate contract
+
+When parameter names use physical labels such as `top`, `tail`, `feed`,
+`small-element`, or `large-element`, record a two-row endpoint table before
+writing formulas. Each row must state the physical meaning, the measured CST
+coordinate, the controlling parameter, and the coupled objects at that end.
+Do not infer that a physical `top` is `z = 0`, `z_min`, or `z_max`; prove the
+mapping from the active coordinate triad, excitation/termination location, and
+actual geometry.
+
+For a linear axial taper, define the interpolation direction from the physical
+endpoint coordinates, even when Z increases toward the physical top:
+
+```text
+t(z) = (z - z_physical_top) / (z_physical_tail - z_physical_top)
+value(z) = value_top + (value_tail - value_top) * t(z)
+```
+
+Reject coincident endpoints. Measure `t = 0` and `t = 1` from the rebuilt
+geometry and confirm they produce the intended physical values, rather than
+only checking formula text. Use the same endpoint convention for every coupled
+conductor, dielectric/vacuum body, feed transition, load/port endpoint, and
+mesh helper that follows the taper.
+
 Every parameterized change needs at least:
 
 1. a zero-change state that must reproduce the baseline;
@@ -76,6 +100,14 @@ physical outcome from geometry or endpoints rather than trusting the formula
 alone. Check its Boolean return, new CST messages, expected model-tree objects,
 and connection state. A History error may return `False` or display a blocking
 modal instead of raising a Python exception.
+
+For a taper, include endpoint-specific regression evidence in addition to the
+usual envelope checks: measured width or gap at both physical ends, taper
+direction, continuity of the mating body, and feed/load contact. The
+zero-change state must make top and tail values equal and reproduce the
+baseline. Include one reversed-gradient state when valid, so a coordinate-axis
+or physical-label inversion cannot remain hidden behind a visually plausible
+nominal result.
 
 Use a full History rebuild only as an additional isolated diagnostic after
 regular rebuilds are stable, on a disposable copy, and when the model size and

@@ -23,24 +23,25 @@ def get_rule_full_content(rule_path):
         return "未找到该规则的物理源文件 RULE.md！"
     return read_file_safely(absolute_rule_path)
 
-def generate_html_dashboard():
+def generate_html_dashboard(metadata_file=METADATA_FILE, output_file=DASHBOARD_FILE):
     """
     读取规则元数据索引，生成精美的暗色毛玻璃风格交互看板 dashboard.html
     """
     print("正在启动 PGRMS 看板生成引擎，正在渲染交互大屏...")
     
-    if not os.path.exists(METADATA_FILE):
+    if not os.path.exists(metadata_file):
         print("错误: 规则索引库不存在，请先运行 scan 扫描命令。")
         return
         
     try:
-        with open(METADATA_FILE, "r", encoding="utf-8") as f:
+        with open(metadata_file, "r", encoding="utf-8") as f:
             data = json.load(f)
     except Exception as e:
         print(f"读取索引库失败: {str(e)}")
         return
         
     rules = data.get("rules", {})
+    families = data.get("families", {})
     
     # 动态将每条规则的完整 Markdown 源码注入到元数据中，便于前端弹窗直接渲染
     rules_list = []
@@ -80,6 +81,7 @@ def generate_html_dashboard():
 
     # 序列化为 JSON 并对 HTML 敏感标签尖括号进行 Unicode 转义，防止 HTML 解析器提前截断 script 标签
     rules_json = json.dumps(rules_list, ensure_ascii=False).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+    families_json = json.dumps(list(families.values()), ensure_ascii=False).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
 
     # HTML 网页源码模板 (使用高拟真暗色毛玻璃 UI 风格，全部原生 HTML+CSS+JS 编写)
     html_template = f"""<!DOCTYPE html>
@@ -273,6 +275,26 @@ def generate_html_dashboard():
             margin: 30px auto 0 auto;
             padding: 0 40px;
         }}
+
+        .family-overview {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }}
+
+        .family-card {{
+            background: var(--glass-bg);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 18px;
+            padding: 20px;
+        }}
+
+        .family-card h3 {{ margin-bottom: 8px; }}
+        .family-card p {{ color: var(--text-secondary); font-size: 13px; line-height: 1.5; }}
+        .family-meta {{ margin-top: 14px; display: grid; gap: 8px; font-size: 12px; color: #cbd5e1; }}
+        .family-member {{ padding: 7px 9px; background: rgba(0, 0, 0, 0.18); border-radius: 8px; }}
+        .family-owner {{ color: #a5b4fc; }}
 
         /* 仪表盘统计面板 (KPIs Deck) */
         .metrics-grid {{
@@ -770,6 +792,9 @@ def generate_html_dashboard():
                 <button class="dimension-btn" id="btn-src" onclick="switchDimension('sources')">
                     <i class="fa-solid fa-code-branch"></i> 来源分类
                 </button>
+                <button class="dimension-btn" id="btn-family" onclick="switchDimension('families')">
+                    <i class="fa-solid fa-diagram-project"></i> 技能族
+                </button>
             </div>
 
             <!-- 模糊搜索框 -->
@@ -783,6 +808,11 @@ def generate_html_dashboard():
                 <option value="all">所有激活状态</option>
                 <option value="active">仅显示已启用</option>
                 <option value="disabled">仅显示已停用</option>
+            </select>
+
+            <select id="familyFilter" class="select-filter">
+                <option value="all">全部技能族</option>
+                <option value="ungrouped">未分组</option>
             </select>
 
             <!-- 评分排序器 -->
@@ -826,6 +856,8 @@ def generate_html_dashboard():
                 <i class="fa-solid fa-triangle-exclamation metric-icon warn"></i>
             </div>
         </section>
+
+        <section class="family-overview" id="familyOverview"></section>
 
         <!-- 看板大屏主体（动态渲染容器） -->
         <main class="kanban-board" id="kanbanBoard"></main>
@@ -871,6 +903,7 @@ def generate_html_dashboard():
     <script>
         // 从 Python 端注入序列化好的全量规则 JSON 数组
         const rulesData = {rules_json};
+        const familiesData = {families_json};
         
         // 简易安全 HTML 转义工具函数，防范源文件注入 XSS
         function escapeHTML(str) {{
@@ -889,6 +922,7 @@ def generate_html_dashboard():
         // 获取 DOM 节点
         const searchInput = document.getElementById('searchInput');
         const statusFilter = document.getElementById('statusFilter');
+        const familyFilter = document.getElementById('familyFilter');
         const scoreSort = document.getElementById('scoreSort');
         const modalOverlay = document.getElementById('modalOverlay');
         const modalCloseBtn = document.getElementById('modalCloseBtn');
@@ -905,8 +939,31 @@ def generate_html_dashboard():
             sources: [
                 {{ id: 'custom', title: '个人自建规则 (Custom Rules)', icon: 'fa-user-gear' }},
                 {{ id: 'registry', title: '第三方引入规则 (Third-Party Rules)', icon: 'fa-cloud-arrow-down' }}
+            ],
+            families: [
+                ...familiesData.map(family => ({{ id: family.id, title: family.title, icon: 'fa-diagram-project' }})),
+                {{ id: 'ungrouped', title: '未分组技能 (Ungrouped)', icon: 'fa-layer-group' }}
             ]
         }};
+
+        function initializeFamilyUI() {{
+            familiesData.forEach(family => {{
+                const option = document.createElement('option');
+                option.value = family.id;
+                option.textContent = family.title;
+                familyFilter.appendChild(option);
+            }});
+
+            const overview = document.getElementById('familyOverview');
+            overview.innerHTML = familiesData.map(family => {{
+                const memberHtml = family.members.map(member => {{
+                    const dependencies = member.depends_on.length ? ' → ' + member.depends_on.join(', ') : '';
+                    return '<div class="family-member"><strong>' + escapeHTML(member.skill) + '</strong> [' + escapeHTML(member.kind) + '] — ' + escapeHTML(member.role) + escapeHTML(dependencies) + '</div>';
+                }}).join('');
+                const owners = Object.entries(family.ownership).map(([topic, owner]) => escapeHTML(topic) + ': ' + escapeHTML(owner)).join(' · ');
+                return '<article class="family-card"><h3>' + escapeHTML(family.title) + '</h3><p>' + escapeHTML(family.description) + '</p><div class="family-meta">' + memberHtml + '<div class="family-owner">知识归属：' + owners + '</div><div>校验：' + escapeHTML(family.validation.status) + '</div></div></article>';
+            }}).join('');
+        }}
         
         function switchDimension(dimension) {{
             if (currentDimension === dimension) return;
@@ -914,6 +971,8 @@ def generate_html_dashboard():
             
             document.getElementById('btn-func').classList.toggle('active', dimension === 'functions');
             document.getElementById('btn-src').classList.toggle('active', dimension === 'sources');
+            document.getElementById('btn-family').classList.toggle('active', dimension === 'families');
+            document.getElementById('familyOverview').style.display = dimension === 'families' ? 'grid' : 'none';
             
             renderBoard();
         }}
@@ -922,6 +981,7 @@ def generate_html_dashboard():
         function renderBoard() {{
             const searchKeyword = searchInput.value.toLowerCase().trim();
             const selectedStatus = statusFilter.value;
+            const selectedFamily = familyFilter.value;
             const sortOrder = scoreSort.value;
             
             const board = document.getElementById('kanbanBoard');
@@ -949,8 +1009,13 @@ def generate_html_dashboard():
                     const descMatch = rule.description.toLowerCase().includes(searchKeyword);
                     const idMatch = rule.name.toLowerCase().includes(searchKeyword);
                     const tagsMatch = rule.tags.some(tag => tag.toLowerCase().includes(searchKeyword));
-                    return titleMatch || descMatch || idMatch || tagsMatch;
+                    const familyMatch = (rule.family || 'ungrouped').toLowerCase().includes(searchKeyword);
+                    return titleMatch || descMatch || idMatch || tagsMatch || familyMatch;
                 }});
+            }}
+
+            if (selectedFamily !== 'all') {{
+                filteredRules = filteredRules.filter(rule => (rule.family || 'ungrouped') === selectedFamily);
             }}
             
             // 过滤：状态筛选
@@ -996,8 +1061,10 @@ def generate_html_dashboard():
                 let targetColId = '';
                 if (currentDimension === 'functions') {{
                     targetColId = rule.source_type === 'registry' ? 'registry' : rule.category;
-                }} else {{
+                }} else if (currentDimension === 'sources') {{
                     targetColId = rule.source_type; // 'custom' or 'registry'
+                }} else {{
+                    targetColId = rule.family || 'ungrouped';
                 }}
                 
                 const colList = document.getElementById('list-' + targetColId);
@@ -1030,7 +1097,8 @@ def generate_html_dashboard():
             const srcClass = rule.source_type;
             const progressWidth = rule.status === 'disabled' ? 0 : rule.score * 10;
             
-            const tagsHtml = rule.tags.map(tag => '<span class="tag-pill">' + escapeHTML(tag) + '</span>').join('');
+            const familyTag = '<span class="tag-pill">family: ' + escapeHTML(rule.family || 'ungrouped') + '</span>';
+            const tagsHtml = familyTag + rule.tags.map(tag => '<span class="tag-pill">' + escapeHTML(tag) + '</span>').join('');
             
             div.innerHTML = '<div class="card-header"><span class="card-title" title="' + escapeHTML(rule.title) + '">' + escapeHTML(rule.title) + '</span><span class="source-badge ' + srcClass + '">' + srcText + '</span></div><div class="card-desc">' + escapeHTML(rule.description) + '</div><div class="score-bar-section"><div class="score-row"><span class="score-label">健康评分</span><span class="score-value-text">' + rule.score.toFixed(1) + '</span></div><div class="score-progress-bg"><div class="score-progress-fill" style="width: ' + progressWidth + '%"></div></div></div><div class="suggestion-box"><div class="suggestion-indicator"></div><div class="suggestion-text">' + escapeHTML(rule.suggestion) + '</div></div><div class="tags-wrapper">' + tagsHtml + '</div>';
             
@@ -1076,6 +1144,7 @@ def generate_html_dashboard():
         // 注册控制监听事件
         searchInput.addEventListener('input', renderBoard);
         statusFilter.addEventListener('change', renderBoard);
+        familyFilter.addEventListener('change', renderBoard);
         scoreSort.addEventListener('change', renderBoard);
         modalCloseBtn.addEventListener('click', closeModal);
         
@@ -1094,7 +1163,11 @@ def generate_html_dashboard():
         }});
 
         // 首次加载看板渲染
-        window.addEventListener('DOMContentLoaded', renderBoard);
+        window.addEventListener('DOMContentLoaded', () => {{
+            initializeFamilyUI();
+            document.getElementById('familyOverview').style.display = 'none';
+            renderBoard();
+        }});
     </script>
 </body>
 </html>
@@ -1102,9 +1175,9 @@ def generate_html_dashboard():
     
     # 写入 dashboard.html 文件中
     try:
-        with open(DASHBOARD_FILE, "w", encoding="utf-8-sig") as f:
+        with open(output_file, "w", encoding="utf-8-sig") as f:
             f.write(html_template)
-        print(f"看板大屏生成成功！已成功输出并同步至: {DASHBOARD_FILE}")
+        print(f"看板大屏生成成功！已成功输出并同步至: {output_file}")
     except Exception as e:
         print(f"写入看板 dashboard.html 失败: {str(e)}")
 

@@ -134,6 +134,27 @@ Python exception. Exercise such invalid states only in a disposable project and
 behind an explicit diagnostic option. Validate the same contract in Python so
 normal automated regressions do not deliberately block on expected UI errors.
 
+### Recovery after a History error
+
+When CST reports a History Error or says that model information is inconsistent
+and a structure update is required, stop editing immediately. Capture the first
+error text, the failing History caption, new Messages, and the current save
+state before attempting another mutation.
+
+1. Dismiss only the known error dialog and confirm no second modal remains.
+2. Use CST's native structure-update/rebuild action on a disposable copy; do
+   not guess an API replacement for a GUI-only recovery command.
+3. Check the normal `Rebuild()` return, Messages, model-tree objects, and
+   connection state after the update.
+4. If recovery fails or the model remains inconsistent, close without relying
+   on unsaved state, reopen the last verified saved copy, and isolate the next
+   History item there.
+5. After a successful recovery, save, close, reopen, and compare the protected
+   fingerprints before resuming edits.
+
+This prevents a parser or validation failure from being mistaken for a valid
+partial model and prevents later edits from compounding inconsistent geometry.
+
 ## Result Reading
 
 Use `cst.results.ProjectFile` after a solver run when result data exists:

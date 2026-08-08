@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "id": "cst",
+  "title": "CST Engineering",
+  "description": "CST Studio Suite control, rebuildable modeling, parameterization, advanced geometry, antenna reproduction, and skills governance.",
+  "members": [
+    {
+      "skill": "cst-control-skill",
+      "kind": "core",
+      "role": "CST discovery, connection, project selection, persistence, and delivery",
+      "depends_on": []
+    },
+    {
+      "skill": "cst-history-macro-skill",
+      "kind": "core",
+      "role": "Rebuildable History List and VBA modeling",
+      "depends_on": [
+        "cst-control-skill"
+      ]
+    },
+    {
+      "skill": "cst-parametric-modeling",
+      "kind": "core",
+      "role": "Parameter contracts, optimization readiness, and multi-state regression",
+      "depends_on": [
+        "cst-control-skill",
+        "cst-history-macro-skill"
+      ]
+    },
+    {
+      "skill": "cst-advanced-geometry-operations",
+      "kind": "core",
+      "role": "Complex native geometry, transforms, booleans, tapers, sweeps, and lofts",
+      "depends_on": [
+        "cst-control-skill",
+        "cst-history-macro-skill"
+      ]
+    },
+    {
+      "skill": "cst-antenna-paper-reproduction",
+      "kind": "extension",
+      "role": "Traceable paper-to-antenna-model orchestration",
+      "depends_on": [
+        "cst-control-skill",
+        "cst-history-macro-skill",
+        "cst-parametric-modeling",
+        "cst-advanced-geometry-operations"
+      ]
+    },
+    {
+      "skill": "cst-skills-retrospective",
+      "kind": "governance",
+      "role": "Evidence-based retrospective, approval, validation, and source-first synchronization",
+      "depends_on": []
+    }
+  ],
+  "ownership": {
+    "session-persistence": "cst-control-skill",
+    "history-vba": "cst-history-macro-skill",
+    "parameter-contracts": "cst-parametric-modeling",
+    "complex-geometry": "cst-advanced-geometry-operations",
+    "paper-reproduction": "cst-antenna-paper-reproduction",
+    "family-governance": "cst-skills-retrospective"
+  },
+  "governance": {
+    "retrospective_skill": "cst-skills-retrospective"
+  }
+}

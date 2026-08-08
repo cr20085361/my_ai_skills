@@ -24,6 +24,12 @@
       "prompt": "在 CST History 中按当前数量参数动态生成一组弯曲金属条，数量和曲率都要能扫参。",
       "expected_output": "在 History 中验证整数范围并循环生成确定性名称，采用非退化闭合截面与 LoftCurves，使用接触容差，并在数量变化后检查模型树。",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "我在 CST History 里声明了 Dim length As Double，并在 If 里校验新的馈线宽度，History 报 Expecting a var name 或 existing scalar var。",
+      "expected_output": "先把声明、赋值和完整 If ... Then / End If 放入独立预检 History 项；将 length 改为语义明确的非冲突局部名，保留外部参数合同拦截，再确认 CST 版本实际接受比较语法后才生成几何。",
+      "files": []
     }
   ]
 }

@@ -14,3 +14,6 @@ temp_test_project/
 .agents/
 .codex/
 .pgrms-deploy-logs/
+
+# Local atomic-write backups
+metadata.json.bak

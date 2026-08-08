@@ -9,14 +9,18 @@ import sys
 import json
 import shutil
 import unittest
+from unittest.mock import patch
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
+import pgrms
+import compiler
+
 from pgrms import (
     run_binding, run_touching, scan_repository,
     deploy_global_skill_packages, deploy_vscode_global_instructions,
-    run_deploy
+    run_deploy, build_repository_metadata
 )
 from compiler import run_compilation, get_rule_body_content
 from utils import METADATA_FILE, safe_write_json, read_file_safely
@@ -33,25 +37,10 @@ class TestPGRMSSystem(unittest.TestCase):
             shutil.rmtree(self.temp_project_dir)
         os.makedirs(self.temp_project_dir, exist_ok=True)
 
-        self.metadata_backup = None
-        if os.path.exists(self.metadata_file):
-            with open(self.metadata_file, "r", encoding="utf-8") as f:
-                self.metadata_backup = f.read()
-
     def tearDown(self):
         if os.path.exists(self.temp_project_dir):
             shutil.rmtree(self.temp_project_dir)
 
-        if self.metadata_backup:
-            with open(self.metadata_file, "w", encoding="utf-8") as f:
-                f.write(self.metadata_backup)
-
-        override_file = os.path.join(self.root_dir, "source", "custom", "productivity", "docx", "override.md")
-        if os.path.exists(override_file):
-            try:
-                os.remove(override_file)
-            except Exception:
-                pass
 
     def test_1_smart_binding_with_ide_preference(self):
         """测试自适应绑定与 IDE 偏好"""
@@ -83,14 +72,16 @@ class TestPGRMSSystem(unittest.TestCase):
     def test_2_override_merge(self):
         """测试双层 override.md 追加合并功能"""
         print("\n=== 测试 2：Override.md 追加合并 ===")
-        rule_dir = os.path.join(self.root_dir, "source", "custom", "productivity", "docx")
-        self.assertTrue(os.path.exists(rule_dir))
+        source_rule_dir = os.path.join(self.root_dir, "source", "custom", "productivity", "docx")
+        rule_dir = os.path.join(self.temp_project_dir, "source", "custom", "productivity", "docx")
+        shutil.copytree(source_rule_dir, rule_dir)
 
         override_file = os.path.join(rule_dir, "override.md")
         with open(override_file, "w", encoding="utf-8") as f:
             f.write("### 测试特调指令\n个人特调参数 X = True。")
 
-        body = get_rule_body_content("source/custom/productivity/docx")
+        with patch.object(compiler, "ROOT_DIR", self.temp_project_dir):
+            body = get_rule_body_content("source/custom/productivity/docx")
 
         self.assertIn("个人专属修正 (User Personal Override)", body)
         self.assertIn("测试特调指令", body)
@@ -131,19 +122,22 @@ class TestPGRMSSystem(unittest.TestCase):
     def test_4_touch_with_atomic_write(self):
         """测试使用频次自增 + 原子写入（应产生 .bak 备份）"""
         print("\n=== 测试 4：使用频次自增 + 原子写入 ===")
-        with open(self.metadata_file, "r", encoding="utf-8") as f:
+        isolated_metadata = os.path.join(self.temp_project_dir, "metadata.json")
+        isolated_dashboard = os.path.join(self.temp_project_dir, "dashboard.html")
+        shutil.copy2(self.metadata_file, isolated_metadata)
+        with open(isolated_metadata, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         self.assertIn("matlab", data["rules"])
         original_count = data["rules"]["matlab"].get("usage_count", 0)
 
-        run_touching("matlab")
+        run_touching("matlab", metadata_file=isolated_metadata, dashboard_file=isolated_dashboard)
 
         # 验证 .bak 备份文件是否产生
-        bak_file = self.metadata_file + ".bak"
+        bak_file = isolated_metadata + ".bak"
         self.assertTrue(os.path.exists(bak_file), "原子写入未产生 .bak 备份文件！")
 
-        with open(self.metadata_file, "r", encoding="utf-8") as f:
+        with open(isolated_metadata, "r", encoding="utf-8") as f:
             updated_data = json.load(f)
 
         new_count = updated_data["rules"]["matlab"].get("usage_count", 0)
@@ -246,7 +240,9 @@ class TestPGRMSSystem(unittest.TestCase):
         """deploy 默认 dry-run，不应写入 fake HOME。"""
         fake_home_dir = os.path.join(self.temp_project_dir, "fake_home_dry_run")
 
-        run_deploy(target="codex", apply=False, home_dir=fake_home_dir)
+        with patch.object(pgrms, "scan_repository", return_value={}), \
+                patch.object(compiler, "run_compilation", return_value={}):
+            run_deploy(target="codex", apply=False, home_dir=fake_home_dir)
 
         self.assertFalse(os.path.exists(fake_home_dir), "dry-run 不应创建 fake HOME")
 
@@ -254,7 +250,17 @@ class TestPGRMSSystem(unittest.TestCase):
         """deploy --apply --home 会同步三套技能目录并生成日志。"""
         fake_home_dir = os.path.join(self.temp_project_dir, "fake_home_apply")
 
-        run_deploy(target="all", apply=True, home_dir=fake_home_dir)
+        isolated_dist = os.path.join(self.temp_project_dir, "dist")
+        for target_name in ("antigravity", "codex"):
+            skill_dir = os.path.join(isolated_dist, target_name, "skills", "sample-skill")
+            os.makedirs(skill_dir, exist_ok=True)
+            with open(os.path.join(skill_dir, "SKILL.md"), "w", encoding="utf-8") as f:
+                f.write("---\nname: sample-skill\n---\n")
+
+        with patch.object(pgrms, "scan_repository", return_value={}), \
+                patch.object(compiler, "run_compilation", return_value={}), \
+                patch.object(pgrms, "DIST_DIR", isolated_dist):
+            run_deploy(target="all", apply=True, home_dir=fake_home_dir)
 
         self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".agent", "skills")))
         self.assertTrue(os.path.exists(os.path.join(fake_home_dir, ".agents", "skills")))
@@ -284,15 +290,12 @@ class TestPGRMSSystem(unittest.TestCase):
 
     def test_12_scan_repository_includes_audience_metadata(self):
         """scan 后的 metadata.json 应包含 audience 字段。"""
-        scan_repository()
-
-        with open(self.metadata_file, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        data = build_repository_metadata()
 
         self.assertEqual(data["rules"]["chinese-output-constraint"]["audience"], "codex-core")
         self.assertEqual(data["rules"]["docx"]["audience"], "archive")
 
-    def test_13_codex_compile_skips_archive_rules(self):
+    def test_13_codex_compile_includes_web_ui_members_and_skips_archive_rules(self):
         """codex 编译默认只保留 codex-core 和 codex-project。"""
         binding_info = {
             "bound_at": "2026-05-20 13:00:00",
@@ -308,7 +311,7 @@ class TestPGRMSSystem(unittest.TestCase):
 
         codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
         self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "frontend-design", "SKILL.md")))
-        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "ui-ux-pro-max")))
+        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "ui-ux-pro-max", "SKILL.md")))
         self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "docx")))
 
 

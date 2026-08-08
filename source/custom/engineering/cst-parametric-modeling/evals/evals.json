@@ -24,6 +24,12 @@
       "prompt": "复杂 loft 模型 full_history_rebuild 会断开 CST，但普通 Rebuild 能完成。参数回归应该怎么做？",
       "expected_output": "把常规 Rebuild 作为有效状态回归默认路径，联合返回值、Messages、模型树和几何指纹验收；full History rebuild 仅作为可选隔离诊断。",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "对数周期天线的物理 top 端在最大 Z 而不是 Z=0。我要新增 top 宽度和间隙参数形成线性渐变。",
+      "expected_output": "先建立物理端点到实际坐标、激励和耦合对象的契约；以 z_physical_top 和 z_physical_tail 定义插值，不假设 Z 方向；回归实际首尾宽度/间隙、连续性、零变化和有效反向渐变。",
+      "files": []
     }
   ]
 }

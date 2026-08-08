@@ -14,6 +14,7 @@ from utils import (
     read_file_safely, safe_write_json,
     cli_success, cli_warning, cli_error, cli_info, cli_summary
 )
+from families import FamilyValidationError, resolve_family_rules
 
 EXCLUDED_PACKAGE_NAMES = {
     ".git",
@@ -28,7 +29,23 @@ EXCLUDED_PACKAGE_NAMES = {
 CODEX_ALLOWED_AUDIENCES = {"codex-core", "codex-project"}
 
 
-def load_active_rules(project_tags=None):
+def ensure_family_target_compatibility(rules, target):
+    """拒绝会静默遗漏成员的显式技能族部署。"""
+    if target != "codex":
+        return
+    excluded = [
+        rule["name"]
+        for rule in rules
+        if (rule.get("audience") or "archive").strip().lower() not in CODEX_ALLOWED_AUDIENCES
+    ]
+    if excluded:
+        raise FamilyValidationError([
+            "explicit family deployment to Codex would exclude archive members: "
+            + ", ".join(excluded)
+        ])
+
+
+def load_active_rules(project_tags=None, family_ids=None, metadata=None):
     """
     加载所有处于激活状态且健康评分 >= 5.0 的规则。
     自适应过滤逻辑：
@@ -36,17 +53,30 @@ def load_active_rules(project_tags=None):
     - 否则，必须其 tags 与 project_tags 存在交集才允许加载
     注意：此逻辑对原创和第三方规则一视同仁，真正实现按需精准注入。
     """
-    if not os.path.exists(METADATA_FILE):
+    if metadata is None and not os.path.exists(METADATA_FILE):
         cli_warning("规则索引库不存在，正在尝试自动生成...")
         from pgrms import scan_repository
         scan_repository()
 
-    try:
-        with open(METADATA_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except Exception as e:
-        cli_error(f"读取规则索引库失败: {str(e)}")
-        return []
+    if metadata is None:
+        try:
+            with open(METADATA_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception as e:
+            cli_error(f"读取规则索引库失败: {str(e)}")
+            return []
+    else:
+        data = metadata
+
+    if family_ids:
+        try:
+            family_rules = resolve_family_rules(data, family_ids)
+        except FamilyValidationError as exc:
+            for error in exc.errors:
+                cli_error(error)
+            return []
+        cli_info(f"显式技能族选择: {', '.join(family_ids)} | 加载 {len(family_rules)} 条规则")
+        return family_rules
 
     rules = data.get("rules", {})
     active_rules = []
@@ -175,14 +205,14 @@ def compile_for_cline(rules, output_dir=None):
     cli_success(f"Roo-Cline 规则文件: {rooclinerules_file}")
 
 
-def compile_for_antigravity(rules, output_dir=None):
+def compile_for_antigravity(rules, output_dir=None, dist_root=None):
     """
     编译并生成 Antigravity/Gemini 全局技能包。
     """
     if output_dir:
         antigravity_dist = os.path.join(output_dir, ".gemini", "antigravity", "skills")
     else:
-        antigravity_dist = os.path.join(DIST_DIR, "antigravity", "skills")
+        antigravity_dist = os.path.join(dist_root or DIST_DIR, "antigravity", "skills")
 
     if os.path.exists(antigravity_dist):
         try:
@@ -244,7 +274,7 @@ def filter_rules_for_codex(rules):
     return codex_rules
 
 
-def compile_for_codex(rules, output_dir=None):
+def compile_for_codex(rules, output_dir=None, dist_root=None):
     """
     Build a local Codex skill bundle without touching user-global directories.
     """
@@ -252,7 +282,7 @@ def compile_for_codex(rules, output_dir=None):
     if output_dir:
         codex_dist = os.path.join(output_dir, ".codex", "skills")
     else:
-        codex_dist = os.path.join(DIST_DIR, "codex", "skills")
+        codex_dist = os.path.join(dist_root or DIST_DIR, "codex", "skills")
     if os.path.exists(codex_dist):
         shutil.rmtree(codex_dist)
     os.makedirs(codex_dist, exist_ok=True)
@@ -292,7 +322,7 @@ COMPILER_MAP = {
 }
 
 
-def run_compilation(target="all", project_path=None):
+def run_compilation(target="all", project_path=None, family_ids=None):
     """
     执行规则的编译分发工作。
     支持 project_path 参数：
@@ -326,10 +356,22 @@ def run_compilation(target="all", project_path=None):
         else:
             cli_info(f"项目路径 '{abs_project_path}' 未包含 .pgrms.json，将输出至默认 dist 目录。")
 
-    rules = load_active_rules(project_tags=project_tags)
+    metadata = None
+    if family_ids:
+        from pgrms import scan_repository
+        metadata = scan_repository()
+        if metadata is None:
+            cli_error("技能族索引刷新失败，编译终止。")
+            return None
+
+    rules = load_active_rules(
+        project_tags=project_tags,
+        family_ids=family_ids,
+        metadata=metadata,
+    )
     if not rules:
         cli_warning("没有可供编译的有效激活规则！编译终止。")
-        return
+        return None
 
     if not output_dir:
         os.makedirs(DIST_DIR, exist_ok=True)
@@ -344,6 +386,15 @@ def run_compilation(target="all", project_path=None):
     else:
         actual_targets = [target]
 
+    if family_ids:
+        try:
+            for current_target in actual_targets:
+                ensure_family_target_compatibility(rules, current_target)
+        except FamilyValidationError as exc:
+            for error in exc.errors:
+                cli_error(error)
+            return None
+
     for t in actual_targets:
         if t in COMPILER_MAP:
             COMPILER_MAP[t](rules, output_dir)
@@ -351,6 +402,7 @@ def run_compilation(target="all", project_path=None):
     elapsed = time.time() - t0
     target_desc = output_dir or "dist/"
     cli_summary(f"编译完成 | {len(rules)} 条规则 | {len(actual_targets)} 个目标 | 输出: {target_desc} | 耗时 {elapsed:.2f}s")
+    return {"rules": [rule["name"] for rule in rules], "targets": actual_targets, "output": target_desc}
 
 
 if __name__ == "__main__":

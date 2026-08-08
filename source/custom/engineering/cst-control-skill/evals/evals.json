@@ -24,6 +24,12 @@
       "prompt": "CST 2026 用 --hide 启动后一直连不上，而且参数重建报错时 Python 没抛异常。请诊断自动化链路。",
       "expected_output": "改用显式 Microwave Studio 启动并检查许可证、进程和模态窗口；同时检查 API 返回值、Messages、模型树和连接状态，而不是只等待 Python 异常。",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "CST History 报错后提示 Inconsistent model information，请先 perform a structure update 再编辑。应该怎么安全恢复？",
+      "expected_output": "停止继续编辑并记录首个错误、History 标题和 Messages；在副本中使用 CST 原生结构更新/普通 Rebuild 验证状态，失败时重开最后已验证保存点，成功后保存、关闭重开并比较受保护指纹。",
+      "files": []
     }
   ]
 }

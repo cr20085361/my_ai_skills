@@ -31,6 +31,7 @@ def ensure_utf8_console():
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(SCRIPTS_DIR)
 SOURCE_DIR = os.path.join(ROOT_DIR, "source")
+FAMILIES_DIR = os.path.join(SOURCE_DIR, "families")
 METADATA_FILE = os.path.join(ROOT_DIR, "metadata.json")
 DIST_DIR = os.path.join(ROOT_DIR, "dist")
 ARCHIVE_DIR = os.path.join(ROOT_DIR, "archive")

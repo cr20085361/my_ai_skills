@@ -1,4 +1,5 @@
 {
+  "schema_version": 2,
   "rules": {
     "algorithmic-art": {
       "name": "algorithmic-art",
@@ -56,7 +57,8 @@
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
-      "path": "source/custom/design/frontend-design"
+      "path": "source/custom/design/frontend-design",
+      "family": "web-ui-delivery"
     },
     "theme-factory": {
       "name": "theme-factory",
@@ -82,7 +84,7 @@
       "title": "ui-ux-pro-max",
       "description": "UI/UX design intelligence for web and mobile. Searchable local database with 84 styles, 192 color palettes, 74 font pairings, 192 product types, 98 UX guidelines, 104 icon entries, 16 GSAP motion presets, and 25 chart types across 22 stacks (React, Next.js, Vue, Nuxt, Svelte, Astro, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, Jetpack Compose, Angular, Laravel, JavaFX, WPF, WinUI, Avalonia, Uno Platform, UWP, Three.js, and HTML/CSS). Use when designing, building, or reviewing UI: pages, components, color schemes, typography, layout, accessibility, animation, or data visualization.",
       "category": "design",
-      "audience": "archive",
+      "audience": "codex-project",
       "tags": [
         "ui",
         "ux",
@@ -96,7 +98,8 @@
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
-      "path": "source/custom/design/ui-ux-pro-max"
+      "path": "source/custom/design/ui-ux-pro-max",
+      "family": "web-ui-delivery"
     },
     "code-iteration-optimization-specialist": {
       "name": "code-iteration-optimization-specialist",
@@ -135,7 +138,8 @@
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
-      "path": "source/custom/engineering/cst-advanced-geometry-operations"
+      "path": "source/custom/engineering/cst-advanced-geometry-operations",
+      "family": "cst"
     },
     "cst-antenna-paper-reproduction": {
       "name": "cst-antenna-paper-reproduction",
@@ -156,7 +160,8 @@
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
-      "path": "source/custom/engineering/cst-antenna-paper-reproduction"
+      "path": "source/custom/engineering/cst-antenna-paper-reproduction",
+      "family": "cst"
     },
     "cst-control-skill": {
       "name": "cst-control-skill",
@@ -177,7 +182,8 @@
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
-      "path": "source/custom/engineering/cst-control-skill"
+      "path": "source/custom/engineering/cst-control-skill",
+      "family": "cst"
     },
     "cst-history-macro-skill": {
       "name": "cst-history-macro-skill",
@@ -198,7 +204,8 @@
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
-      "path": "source/custom/engineering/cst-history-macro-skill"
+      "path": "source/custom/engineering/cst-history-macro-skill",
+      "family": "cst"
     },
     "cst-parametric-modeling": {
       "name": "cst-parametric-modeling",
@@ -220,7 +227,30 @@
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
-      "path": "source/custom/engineering/cst-parametric-modeling"
+      "path": "source/custom/engineering/cst-parametric-modeling",
+      "family": "cst"
+    },
+    "cst-skills-retrospective": {
+      "name": "cst-skills-retrospective",
+      "title": "CST Skills Retrospective",
+      "description": "Use when a user asks to review, summarize, distill, improve, strengthen, or synchronize CST-related skills or lessons learned, including Chinese requests combining CST with skills、复盘、总结、踩坑、经验、沉淀、补强、改进 or similar intent. Do not use for ordinary CST modeling, simulation, S-parameter analysis, or result summaries unless the user is explicitly asking to improve the reusable CST skills workflow.",
+      "category": "engineering",
+      "audience": "codex-project",
+      "tags": [
+        "cst",
+        "skill",
+        "retrospective",
+        "governance",
+        "validation",
+        "synchronization"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/cst-skills-retrospective",
+      "family": "cst"
     },
     "installer-version-naming": {
       "name": "installer-version-naming",
@@ -314,7 +344,8 @@
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
-      "path": "source/custom/engineering/webapp-testing"
+      "path": "source/custom/engineering/webapp-testing",
+      "family": "web-ui-delivery"
     },
     "chinese-output-constraint": {
       "name": "chinese-output-constraint",
@@ -436,6 +467,26 @@
       "source_type": "custom",
       "path": "source/custom/productivity/skill-creator-cn"
     },
+    "skill-family-governance": {
+      "name": "skill-family-governance",
+      "title": "Skill Family Governance",
+      "description": "Use when a user asks to review, strengthen, coordinate, or synchronize a managed skill family based on completed work, reusable lessons, workflow gaps, ownership, or deployment behavior. Do not use for ordinary task execution or a one-off skill edit that does not affect a family.",
+      "category": "productivity",
+      "audience": "codex-project",
+      "tags": [
+        "skill",
+        "governance",
+        "family",
+        "validation",
+        "synchronization"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/productivity/skill-family-governance"
+    },
     "xlsx": {
       "name": "xlsx",
       "title": "xlsx",
@@ -452,6 +503,126 @@
       "last_used_date": "N/A",
       "source_type": "custom",
       "path": "source/custom/productivity/xlsx"
+    }
+  },
+  "families": {
+    "cst": {
+      "schema_version": 1,
+      "id": "cst",
+      "title": "CST Engineering",
+      "description": "CST Studio Suite control, rebuildable modeling, parameterization, advanced geometry, antenna reproduction, and skills governance.",
+      "members": [
+        {
+          "skill": "cst-control-skill",
+          "kind": "core",
+          "role": "CST discovery, connection, project selection, persistence, and delivery",
+          "depends_on": []
+        },
+        {
+          "skill": "cst-history-macro-skill",
+          "kind": "core",
+          "role": "Rebuildable History List and VBA modeling",
+          "depends_on": [
+            "cst-control-skill"
+          ]
+        },
+        {
+          "skill": "cst-parametric-modeling",
+          "kind": "core",
+          "role": "Parameter contracts, optimization readiness, and multi-state regression",
+          "depends_on": [
+            "cst-control-skill",
+            "cst-history-macro-skill"
+          ]
+        },
+        {
+          "skill": "cst-advanced-geometry-operations",
+          "kind": "core",
+          "role": "Complex native geometry, transforms, booleans, tapers, sweeps, and lofts",
+          "depends_on": [
+            "cst-control-skill",
+            "cst-history-macro-skill"
+          ]
+        },
+        {
+          "skill": "cst-antenna-paper-reproduction",
+          "kind": "extension",
+          "role": "Traceable paper-to-antenna-model orchestration",
+          "depends_on": [
+            "cst-control-skill",
+            "cst-history-macro-skill",
+            "cst-parametric-modeling",
+            "cst-advanced-geometry-operations"
+          ]
+        },
+        {
+          "skill": "cst-skills-retrospective",
+          "kind": "governance",
+          "role": "Evidence-based retrospective, approval, validation, and source-first synchronization",
+          "depends_on": []
+        }
+      ],
+      "ownership": {
+        "session-persistence": "cst-control-skill",
+        "history-vba": "cst-history-macro-skill",
+        "parameter-contracts": "cst-parametric-modeling",
+        "complex-geometry": "cst-advanced-geometry-operations",
+        "paper-reproduction": "cst-antenna-paper-reproduction",
+        "family-governance": "cst-skills-retrospective"
+      },
+      "governance": {
+        "retrospective_skill": "cst-skills-retrospective"
+      },
+      "path": "source/families/cst/family.json",
+      "validation": {
+        "status": "valid",
+        "errors": []
+      }
+    },
+    "web-ui-delivery": {
+      "schema_version": 1,
+      "id": "web-ui-delivery",
+      "title": "Web UI Delivery",
+      "description": "A Codex-ready workflow from design-system decisions through frontend implementation and browser acceptance checks.",
+      "members": [
+        {
+          "skill": "ui-ux-pro-max",
+          "kind": "core",
+          "role": "Design-system discovery, UX requirements, and pre-delivery UI quality checks",
+          "depends_on": []
+        },
+        {
+          "skill": "frontend-design",
+          "kind": "core",
+          "role": "Intentional, content-grounded frontend visual implementation",
+          "depends_on": [
+            "ui-ux-pro-max"
+          ]
+        },
+        {
+          "skill": "webapp-testing",
+          "kind": "extension",
+          "role": "Playwright browser acceptance, diagnostics, screenshots, and logs",
+          "depends_on": [
+            "frontend-design"
+          ]
+        }
+      ],
+      "ownership": {
+        "design-system": "ui-ux-pro-max",
+        "frontend-composition": "frontend-design",
+        "browser-acceptance": "webapp-testing",
+        "family-governance": "skill-family-governance"
+      },
+      "governance": {
+        "retrospective_skill": "skill-family-governance",
+        "shared_retrospective": true
+      },
+      "path": "source/families/web-ui-delivery/family.json",
+      "validation": {
+        "status": "valid",
+        "errors": []
+      }
     }
   }
 }

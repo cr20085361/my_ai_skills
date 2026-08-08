@@ -1,0 +1,15 @@
+{
+  "skill_name": "webapp-testing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "验证本地 React 页面提交订单后是否出现成功状态，并保存截图和浏览器日志。",
+      "expected_output": "先查看可用脚本的帮助，再用 Playwright 等待动态页面稳定，执行可复现的验收并提供截图和日志证据。"
+    },
+    {
+      "id": 2,
+      "prompt": "动态页面刚打开就读取 DOM，结果元素偶尔缺失。",
+      "expected_output": "解释应先等待 networkidle 或合适的稳定信号，再检查 DOM，避免脆弱的竞态测试。"
+    }
+  ]
+}

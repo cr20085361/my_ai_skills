@@ -84,6 +84,37 @@ body, feed contact, and tail termination as one coupled operation ledger. Use
 the formulas, operation order, zero-angle branch, and physical measurements in
 `references/pivoted-rigid-branch-rotation.md`.
 
+## Linear tapered rails and spacer bodies
+
+For a rail width, conductor separation, or spacer thickness that varies along
+an axis, first use the physical-endpoint coordinate contract from
+`cst-parametric-modeling`. Keep `z_physical_top` and `z_physical_tail` as
+semantic reference coordinates; do not replace them with an assumed Z ordering.
+
+For every generated section, evaluate one shared interpolation fraction and
+derive every local dimension from it:
+
+```text
+t(z) = (z - z_physical_top) / (z_physical_tail - z_physical_top)
+w(z) = width_top + (width_tail - width_top) * t(z)
+g(z) = gap_top + (gap_tail - gap_top) * t(z)
+```
+
+Reject zero endpoint distance and non-positive physical widths or gaps before
+creating curves. Use `w(z)` consistently for both mirrored rail edges and
+`g(z)` consistently for their separation and any dielectric/vacuum spacer.
+Do not taper only the conductors while retaining a constant-thickness filler,
+or change a feed transition, load endpoint, or local mesh envelope independently
+of the same endpoint contract.
+
+Retain a verified `Polygon3D`, `CoverCurve`, `Extrude`, `LoftCurves`, or native
+transform chain when it already supplies the correct solid direction and
+symmetry. Add sections or profiles for the taper instead of replacing a proven
+chain with an unrelated construction method. At both physical endpoints,
+measure rail width, inner-face gap, mating-body continuity, and electrical
+contact after a normal Rebuild. Also test the equal-endpoint state and a valid
+reversed gradient when the design permits it.
+
 ## Failure isolation
 
 - If History fails, reduce to the last successful History item plus one new
