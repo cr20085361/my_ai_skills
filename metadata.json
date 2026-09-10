@@ -119,6 +119,30 @@
       "source_type": "custom",
       "path": "source/custom/engineering/code-iteration-optimization-specialist"
     },
+    "codex-vpn-proxy-recovery": {
+      "name": "codex-vpn-proxy-recovery",
+      "title": "Codex VPN Proxy Recovery Without Tun",
+      "description": "Use when Codex Desktop on Windows shows 正在重新连接, retrying sampling request, request timed out, or repeated 1/5–5/5 retries while v2rayN/sing-box is active and Tun mode is disabled. Diagnose the Windows proxy versus Codex native-process proxy path, automatically configure HTTP/HTTPS/WebSocket proxy environment variables, restart Codex with explicit inheritance, verify HTTP and WebSocket reachability, and distinguish local proxy failures from OpenAI 5xx service errors.",
+      "category": "engineering",
+      "audience": "codex-core",
+      "tags": [
+        "codex",
+        "windows",
+        "v2rayn",
+        "sing-box",
+        "vpn",
+        "proxy",
+        "tun",
+        "websocket",
+        "troubleshooting"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/codex-vpn-proxy-recovery"
+    },
     "cst-advanced-geometry-operations": {
       "name": "cst-advanced-geometry-operations",
       "title": "CST Advanced Geometry Operations",
