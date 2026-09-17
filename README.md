@@ -4,7 +4,7 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 
 这个仓库面向代码代理与本地自动化场景，重点做了几件事：
 
-- 统一维护 `source/` 下的 26 条原创规则（design 5 / engineering 12 / productivity 9）
+- 统一维护 `source/` 下的 30 条规则源（20 条启用、10 条停用；Codex 默认编译 19 条）
 - 通过 `metadata.json` 与 `dashboard.html` 提供可检索、可视化的规则索引
 - 支持面向不同 IDE/代理的多目标编译
 - 支持项目级绑定与按标签筛选注入
@@ -16,8 +16,8 @@ PGRMS 用于集中存储、校验、编译和部署可供 Codex、Cursor、Winds
 graph TB
     subgraph SRC["source/ 规则源"]
         D["design/ (5)"]
-        E["engineering/ (12)"]
-        P["productivity/ (9)"]
+        E["engineering/ (15)"]
+        P["productivity/ (10)"]
         F["families/*/family.json"]
     end
 
@@ -349,3 +349,11 @@ flowchart LR
 ## 分支策略
 
 本仓库现已统一由 `main` 管理。后续发布、维护和规则更新均应直接落在 `main`，不再保留长期存在的发布分支。
+
+## 2026-09-07 技能精简
+
+审查结论与恢复方式见 [技能治理报告](archive/2026-09-07-skill-audit.md)。停用采用 `status: disabled`，保留源码和工具资源；不以默认评分 10 或未接入统计的使用次数 0 判断价值。
+
+计划增强的唯一维护源为 `source/custom/productivity/plan-enhancer/RULE.md`，同目录保留 UI 元数据和轻量用例；经 `compile --target codex` 生成 `SKILL.md`。该技能配合原生 Plan 模式，由用户手动切换模型；不自动调度代理。技能自身及输出计划均无固定字数、token 数或步骤数上限，先保证信息充分、决策完整和验收可执行，再通过删除重复与无关内容提高 token 效率。个人 AGENTS.md 中的触发规则已单独安装，技能同步不会修改 AGENTS.md。
+
+`audience: archive` 仅排除 Codex 编译；需要从所有目标停用时必须设置 `status: disabled`。`sync-skills` 是增量覆盖，不会移除旧部署残留，停用后需按确切名称备份移出发现目录。不要执行全量同步覆盖尚未回收到仓库的本地新版本。

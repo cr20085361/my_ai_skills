@@ -1,0 +1,15 @@
+{
+  "skill_name": "project-version-manager",
+  "evals": [
+    {"id": 1, "prompt": "修复 v1.2.9 的导入异常，测试已通过。", "expected_output": "判定 patch，预览 v1.2.10，并在唯一 iteration_id 下登记一次。", "files": []},
+    {"id": 2, "prompt": "为 v1.2.10 添加兼容旧配置的导出功能，测试通过。", "expected_output": "判定 minor，建议 v1.3.0，并将累计次数加一。", "files": []},
+    {"id": 3, "prompt": "v1.3.4 改用不兼容的数据格式，需要迁移。", "expected_output": "判定 major，建议 v2.0.0，并说明迁移造成的不兼容。", "files": []},
+    {"id": 4, "prompt": "继续修复刚才任务的测试失败，使用同一个 iteration_id 重新登记。", "expected_output": "复用原记录，不增加累计次数。", "files": []},
+    {"id": 5, "prompt": "刚完成项目的第一次可用交付。", "expected_output": "新项目登记 v1.0.0 和第 1 次迭代。", "files": []},
+    {"id": 6, "prompt": "已有项目当前是 v3.4.2，但以前次数未知。", "expected_output": "建立零次基线，不猜测历史次数；下一次完成修改才登记第 1 次。", "files": []},
+    {"id": 7, "prompt": "只调查了性能问题，还没有修改代码。", "expected_output": "不更新版本或台账。", "files": []},
+    {"id": 8, "prompt": "发布已经登记的 v1.5.0 到 GitHub。", "expected_output": "使用当前台账版本发布，不重复递增。", "files": []},
+    {"id": 9, "prompt": "项目当前为 v2.0.0-rc.1，准备发布稳定版。", "expected_output": "保留项目预发布策略，要求明确下一个版本，不自动常规 bump。", "files": []},
+    {"id": 10, "prompt": "Plan 模式中，请先评估一次 API 重构。", "expected_output": "只调查和规划；未完成实现和验证前不写入台账。", "files": []}
+  ]
+}

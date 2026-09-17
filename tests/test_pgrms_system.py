@@ -232,7 +232,7 @@ class TestPGRMSSystem(unittest.TestCase):
             content = f.read()
 
         self.assertIn("applyTo: '**'", content)
-        self.assertIn("全局中文输出约束规则", content)
+        self.assertIn("中文输出偏好", content)
         self.assertIn("description:", content)
         print("=== 测试 8 通过 ===")
 
@@ -285,14 +285,23 @@ class TestPGRMSSystem(unittest.TestCase):
 
         codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
         self.assertTrue(os.path.exists(codex_skills_dir))
-        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "chinese-output-constraint", "SKILL.md")))
+        plan_skill = os.path.join(codex_skills_dir, "plan-enhancer", "SKILL.md")
+        self.assertTrue(os.path.exists(plan_skill))
+        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "chinese-output-constraint")))
+        with open(plan_skill, "r", encoding="utf-8") as f:
+            compiled_frontmatter = f.read().split("---", 2)[1]
+        self.assertIn("name: plan-enhancer", compiled_frontmatter)
+        self.assertIn("description:", compiled_frontmatter)
+        for source_only_key in ("title", "category", "audience", "tags", "status", "score"):
+            self.assertNotIn(f"\n{source_only_key}:", "\n" + compiled_frontmatter)
 
 
     def test_12_scan_repository_includes_audience_metadata(self):
         """scan 后的 metadata.json 应包含 audience 字段。"""
         data = build_repository_metadata()
 
-        self.assertEqual(data["rules"]["chinese-output-constraint"]["audience"], "codex-core")
+        self.assertEqual(data["rules"]["plan-enhancer"]["audience"], "codex-core")
+        self.assertEqual(data["rules"]["chinese-output-constraint"]["audience"], "archive")
         self.assertEqual(data["rules"]["docx"]["audience"], "archive")
 
     def test_13_codex_compile_includes_web_ui_members_and_skips_archive_rules(self):
@@ -333,7 +342,7 @@ class TestPGRMSSystem(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "doc-coauthoring")))
         self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "mcp-builder", "SKILL.md")))
 
-    def test_15_doc_coauthoring_injected_with_docs_tag(self):
+    def test_15_disabled_doc_coauthoring_not_injected_with_docs_tag(self):
         """doc-coauthoring 只在 docs/writing 项目中注入。"""
         binding_info = {
             "bound_at": "2026-05-20 13:00:00",
@@ -348,7 +357,8 @@ class TestPGRMSSystem(unittest.TestCase):
         run_compilation(target="codex", project_path=self.temp_project_dir)
 
         codex_skills_dir = os.path.join(self.temp_project_dir, ".codex", "skills")
-        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "doc-coauthoring", "SKILL.md")))
+        self.assertFalse(os.path.exists(os.path.join(codex_skills_dir, "doc-coauthoring", "SKILL.md")))
+        self.assertTrue(os.path.exists(os.path.join(codex_skills_dir, "plan-enhancer", "SKILL.md")))
 
 
 if __name__ == "__main__":

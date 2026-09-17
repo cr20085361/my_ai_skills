@@ -13,7 +13,7 @@
         "generative-art",
         "design"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
@@ -32,7 +32,7 @@
         "png",
         "pdf"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
@@ -72,7 +72,7 @@
         "documents",
         "presentations"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
@@ -112,7 +112,7 @@
         "python",
         "optimization"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
@@ -164,6 +164,26 @@
       "source_type": "custom",
       "path": "source/custom/engineering/cst-advanced-geometry-operations",
       "family": "cst"
+    },
+    "cst-ai-workbench": {
+      "name": "cst-ai-workbench",
+      "title": "CST AI Workbench",
+      "description": "Use the shared CST AI workbench to research antenna requirements or papers, create composable native parametric ModelPlans, validate geometry, deliver projects and reuse measured capabilities.",
+      "category": "engineering",
+      "audience": "codex-project",
+      "tags": [
+        "cst",
+        "antenna",
+        "workbench",
+        "mcp",
+        "model-plan"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/cst-ai-workbench"
     },
     "cst-antenna-paper-reproduction": {
       "name": "cst-antenna-paper-reproduction",
@@ -331,6 +351,26 @@
       "source_type": "custom",
       "path": "source/custom/engineering/mcp-builder"
     },
+    "project-version-manager": {
+      "name": "project-version-manager",
+      "title": "项目版本迭代管理",
+      "description": "在完成项目功能、修复、配置或文档迭代后，依据兼容性更新语义化版本并维护可跨会话追溯的累计迭代次数。不要用于纯调查、规划、未完成工作或仅执行同版本发布。",
+      "category": "engineering",
+      "audience": "codex-core",
+      "tags": [
+        "versioning",
+        "semver",
+        "iteration",
+        "release",
+        "project-management"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/engineering/project-version-manager"
+    },
     "pyinstaller-external-script-bundling": {
       "name": "pyinstaller-external-script-bundling",
       "title": "PyInstaller 打包外部解释器脚本的必备模式",
@@ -374,9 +414,9 @@
     "chinese-output-constraint": {
       "name": "chinese-output-constraint",
       "title": "chinese-output-constraint",
-      "description": "全局中文输出约束规则。强制 AI 助手在所有交互和产出中优先并完全使用中文，包括模型思考过程、最终回答、生成的文档、代码中的注释、工作流说明等。",
+      "description": "默认中文用户沟通和文档偏好；尊重用户指定语言及既有代码约定。",
       "category": "productivity",
-      "audience": "codex-core",
+      "audience": "archive",
       "tags": [
         "general",
         "chinese"
@@ -398,7 +438,7 @@
         "docs",
         "writing"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
@@ -415,7 +455,7 @@
         "docx",
         "documents"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
@@ -450,12 +490,30 @@
         "pdf",
         "documents"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
       "source_type": "custom",
       "path": "source/custom/productivity/pdf"
+    },
+    "plan-enhancer": {
+      "name": "plan-enhancer",
+      "title": "计划增强",
+      "description": "增强软件开发实施计划及其修订，适用于 Codex Plan 模式、开发方案规划和交接给另一模型实施。普通问答、非开发计划及直接执行已定计划不触发。",
+      "category": "productivity",
+      "audience": "codex-core",
+      "tags": [
+        "general",
+        "planning",
+        "handoff"
+      ],
+      "status": "active",
+      "score": 10.0,
+      "usage_count": 0,
+      "last_used_date": "N/A",
+      "source_type": "custom",
+      "path": "source/custom/productivity/plan-enhancer"
     },
     "pptx": {
       "name": "pptx",
@@ -467,7 +525,7 @@
         "pptx",
         "presentations"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
@@ -484,7 +542,7 @@
         "skill",
         "chinese"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",
@@ -521,7 +579,7 @@
         "xlsx",
         "spreadsheet"
       ],
-      "status": "active",
+      "status": "disabled",
       "score": 10.0,
       "usage_count": 0,
       "last_used_date": "N/A",

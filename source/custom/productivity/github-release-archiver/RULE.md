@@ -48,6 +48,7 @@ score: 10.0
    - 若包含重大不兼容变更（Breaking Change） → 升级主版本号（Major，如 `v1.2.3` -> `v2.0.0`）
    - 若包含新特性且向下兼容 → 升级次版本号（Minor，如 `v1.2.3` -> `v1.3.0`）
    - 若仅包含 Bug 修复或日常优化 → 升级修订号（Patch，如 `v1.2.3` -> `v1.2.4`）
+   - 若项目根目录已有 `.iteration-version.json`，且本次归档对应其中已登记的完成迭代，则直接使用其 `current_version`；归档、同步和发布文档不得再次递增版本或累计次数。台账不存在时才按本阶段规则建议版本，且不应仅为发布动作创建台账。
 2. **打 Tag**：在用户确认版本号后，准备在本地执行：
    `git tag -a <version_name> -m "Release <version_name>: <brief_summary>"`
 

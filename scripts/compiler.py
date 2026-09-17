@@ -6,6 +6,7 @@ PGRMS (个人全局规则管理系统) - 多目标规则编译器
 
 import os
 import json
+import re
 import shutil
 import time
 
@@ -27,6 +28,15 @@ EXCLUDED_PACKAGE_NAMES = {
 }
 
 CODEX_ALLOWED_AUDIENCES = {"codex-core", "codex-project"}
+CODEX_SOURCE_ONLY_FRONTMATTER_KEYS = {
+    "audience",
+    "category",
+    "compatibility",
+    "score",
+    "status",
+    "tags",
+    "title",
+}
 
 
 def ensure_family_target_compatibility(rules, target):
@@ -274,6 +284,31 @@ def filter_rules_for_codex(rules):
     return codex_rules
 
 
+def write_codex_skill(source_file, destination_file):
+    """将 PGRMS 管理源转换为符合 Codex Skill 规范的入口文件。"""
+    content, _ = read_file_safely(source_file)
+    content = content.lstrip("\ufeff")
+    if not content.startswith("---"):
+        raise ValueError(f"missing YAML frontmatter: {source_file}")
+
+    parts = content.split("---", 2)
+    if len(parts) < 3:
+        raise ValueError(f"invalid YAML frontmatter: {source_file}")
+
+    output_lines = []
+    skip_key = False
+    for line in parts[1].splitlines():
+        key_match = re.match(r"^([A-Za-z0-9_-]+):", line)
+        if key_match:
+            skip_key = key_match.group(1) in CODEX_SOURCE_ONLY_FRONTMATTER_KEYS
+        if not skip_key:
+            output_lines.append(line)
+
+    compiled = "---\n" + "\n".join(output_lines).strip() + "\n---" + parts[2]
+    with open(destination_file, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(compiled)
+
+
 def compile_for_codex(rules, output_dir=None, dist_root=None):
     """
     Build a local Codex skill bundle without touching user-global directories.
@@ -296,7 +331,7 @@ def compile_for_codex(rules, output_dir=None, dist_root=None):
 
         dst_rule_dir = os.path.join(codex_dist, rule["name"])
         os.makedirs(dst_rule_dir, exist_ok=True)
-        shutil.copy2(src_rule_file, os.path.join(dst_rule_dir, "SKILL.md"))
+        write_codex_skill(src_rule_file, os.path.join(dst_rule_dir, "SKILL.md"))
 
         for item in os.listdir(src_dir):
             if item in ("RULE.md", "override.md") or item in EXCLUDED_PACKAGE_NAMES:

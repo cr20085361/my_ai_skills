@@ -1,0 +1,6 @@
+interface:
+  display_name: "项目版本迭代管理"
+  short_description: "更新项目版本并持续记录累计迭代次数"
+  default_prompt: "使用 $project-version-manager 为本次已验证的项目修改判断版本级别并登记迭代。"
+policy:
+  allow_implicit_invocation: true

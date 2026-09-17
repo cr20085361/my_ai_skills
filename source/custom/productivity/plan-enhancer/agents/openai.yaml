@@ -1,0 +1,6 @@
+interface:
+  display_name: "计划增强"
+  short_description: "生成信息充分、决策完整且可验证的软件实施计划"
+  default_prompt: "使用 $plan-enhancer 为当前开发需求生成信息充分、可直接交接实施的计划。"
+policy:
+  allow_implicit_invocation: true
